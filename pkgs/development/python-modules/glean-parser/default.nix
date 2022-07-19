@@ -29,7 +29,7 @@ buildPythonPackage rec {
   postPatch = ''
     substituteInPlace setup.py \
       --replace "pytest-runner" "" \
-      --replace "MarkupSafe==2.0.1" "MarkupSafe"
+      --replace "MarkupSafe>=1.1.1,<=2.0.1" "MarkupSafe>=1.1.1"
   '';
 
   nativeBuildInputs = [
@@ -50,9 +50,15 @@ buildPythonPackage rec {
     pytestCheckHook
   ];
 
+  preCheck = ''
+    export HOME=$TMPDIR
+  '';
+
   disabledTests = [
-    # https://bugzilla.mozilla.org/show_bug.cgi?id=1741668
+    # Network access
     "test_validate_ping"
+    # Fails since yamllint 1.27.x
+    "test_yaml_lint"
   ];
 
   pythonImportsCheck = [
