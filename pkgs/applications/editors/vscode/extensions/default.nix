@@ -1086,16 +1086,33 @@ let
         mktplcRef = {
           name = "elm-ls-vscode";
           publisher = "Elmtooling";
-          version = "2.6.0";
-          sha256 = "sha256-iNFc7YJFl3d4/BJE9TPJfL0iqEkUtyEyVt4v1J2bXts=";
+          version = "2.7.2";
+          sha256 = "sha256-twxHf8VeTYV3t3FkfG2WUvEDmKb8u+pI/ptspsSmt80=";
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/Elmtooling.elm-ls-vscode/changelog";
           description = "Elm language server";
           downloadPage = "https://marketplace.visualstudio.com/items?itemName=Elmtooling.elm-ls-vscode";
-          homepage = "https://github.com/elm-tooling/elm-language-client-vscode";
           license = lib.licenses.mit;
           maintainers = [ lib.maintainers.mcwitt ];
+        };
+      };
+
+     hbenl.vscode-test-explorer = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "vscode-test-explorer";
+          publisher = "hbenl";
+          version = "2.21.1";
+          sha256 = "sha256-fHyePd8fYPt7zPHBGiVmd8fRx+IM3/cSBCyiI/C0VAg=";
+        };
+      };
+
+     ms-vscode.test-adapter-converter = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "test-adapter-converter";
+          publisher = "ms-vscode";
+          version = "0.1.7";
+          sha256 = "sha256-W5t0X8LwpI6ZL7sx6edo/0jy/ujHHZU+xZWR4f7sbec=";
         };
       };
 
