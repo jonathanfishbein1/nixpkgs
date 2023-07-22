@@ -272,6 +272,14 @@ with lib.maintainers; {
     enableFeatureFreezePing = true;
   };
 
+  flutter = {
+    members = [ gilice mkg20001 RossComputerGuy FlafyDev hacker1024 ];
+    scope = "Maintain Flutter and Dart-related packages and build tools";
+    shortName = "flutter";
+    enableFeatureFreezePing = false;
+    githubTeams = [ "flutter" ];
+  };
+
   freedesktop = {
     members = [ jtojnar ];
     scope = "Maintain Freedesktop.org packages for graphical desktop.";
@@ -292,9 +300,23 @@ with lib.maintainers; {
     members = [
       imincik
       sikmir
+      nh2
+      willcohen
     ];
     scope = "Maintain geospatial packages.";
     shortName = "Geospatial";
+  };
+
+  gitlab = {
+    members = [
+      globin
+      krav
+      talyz
+      yayayayaka
+      yuka
+    ];
+    scope = "Maintain gitlab packages.";
+    shortName = "gitlab";
   };
 
   golang = {
@@ -467,6 +489,15 @@ with lib.maintainers; {
     enableFeatureFreezePing = true;
   };
 
+  lomiri = {
+    members = [
+      OPNA2608
+    ];
+    scope = "Maintain Lomiri desktop environment and related packages.";
+    shortName = "Lomiri";
+    enableFeatureFreezePing = true;
+  };
+
   lumiguide = {
     # Verify additions by approval of an already existing member of the team.
     members = [
@@ -536,10 +567,10 @@ with lib.maintainers; {
       ma27
       fadenb
       mguentner
-      ekleog
       ralith
       dandellion
       sumnerevans
+      nickcao
     ];
     scope = "Maintain the ecosystem around Matrix, a decentralized messenger.";
     shortName = "Matrix";
@@ -551,6 +582,7 @@ with lib.maintainers; {
       emilytrau
       ericson2314
       jk
+      siraben
     ];
     scope = "Maintain the minimal-bootstrap toolchain and related packages.";
     shortName = "Minimal Bootstrap";
@@ -575,7 +607,6 @@ with lib.maintainers; {
 
   nix = {
     members = [
-      Profpatsch
       eelco
       grahamc
       pierron
@@ -622,7 +653,6 @@ with lib.maintainers; {
 
   openstack = {
     members = [
-      emilytrau
       SuperSandro2000
     ];
     scope = "Maintain the ecosystem around OpenStack";

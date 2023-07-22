@@ -1,6 +1,18 @@
-# to run these tests:
-# nix-instantiate --eval --strict nixpkgs/lib/tests/misc.nix
-# if the resulting list is empty, all tests passed
+/*
+Nix evaluation tests for various lib functions.
+
+Since these tests are implemented with Nix evaluation, error checking is limited to what `builtins.tryEval` can detect, which is `throw`'s and `abort`'s, without error messages.
+If you need to test error messages or more complex evaluations, see ./modules.sh, ./sources.sh or ./filesystem.sh as examples.
+
+To run these tests:
+
+  [nixpkgs]$ nix-instantiate --eval --strict lib/tests/misc.nix
+
+If the resulting list is empty, all tests passed.
+Alternatively, to run all `lib` tests:
+
+  [nixpkgs]$ nix-build lib/tests/release.nix
+*/
 with import ../default.nix;
 
 let
@@ -518,6 +530,46 @@ runTests {
     expected = false;
   };
 
+  testFindFirstExample1 = {
+    expr = findFirst (x: x > 3) 7 [ 1 6 4 ];
+    expected = 6;
+  };
+
+  testFindFirstExample2 = {
+    expr = findFirst (x: x > 9) 7 [ 1 6 4 ];
+    expected = 7;
+  };
+
+  testFindFirstEmpty = {
+    expr = findFirst (abort "when the list is empty, the predicate is not needed") null [];
+    expected = null;
+  };
+
+  testFindFirstSingleMatch = {
+    expr = findFirst (x: x == 5) null [ 5 ];
+    expected = 5;
+  };
+
+  testFindFirstSingleDefault = {
+    expr = findFirst (x: false) null [ (abort "if the predicate doesn't access the value, it must not be evaluated") ];
+    expected = null;
+  };
+
+  testFindFirstNone = {
+    expr = builtins.tryEval (findFirst (x: x == 2) null [ 1 (throw "the last element must be evaluated when there's no match") ]);
+    expected = { success = false; value = false; };
+  };
+
+  # Makes sure that the implementation doesn't cause a stack overflow
+  testFindFirstBig = {
+    expr = findFirst (x: x == 1000000) null (range 0 1000000);
+    expected = 1000000;
+  };
+
+  testFindFirstLazy = {
+    expr = findFirst (x: x == 1) 7 [ 1 (abort "list elements after the match must not be evaluated") ];
+    expected = 1;
+  };
 
 # ATTRSETS
 
@@ -568,6 +620,31 @@ runTests {
       trivialAcc = 121;
     };
   };
+
+
+  testMergeAttrsListExample1 = {
+    expr = attrsets.mergeAttrsList [ { a = 0; b = 1; } { c = 2; d = 3; } ];
+    expected = { a = 0; b = 1; c = 2; d = 3; };
+  };
+  testMergeAttrsListExample2 = {
+    expr = attrsets.mergeAttrsList [ { a = 0; } { a = 1; } ];
+    expected = { a = 1; };
+  };
+  testMergeAttrsListExampleMany =
+    let
+      list = genList (n:
+        listToAttrs (genList (m:
+          let
+            # Integer divide n by two to create duplicate attributes
+            str = "halfn${toString (n / 2)}m${toString m}";
+          in
+          nameValuePair str str
+        ) 100)
+      ) 100;
+    in {
+      expr = attrsets.mergeAttrsList list;
+      expected = foldl' mergeAttrs { } list;
+    };
 
   # code from the example
   testRecursiveUpdateUntil = {

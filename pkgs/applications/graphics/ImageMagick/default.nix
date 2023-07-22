@@ -47,13 +47,13 @@ in
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "imagemagick";
-  version = "7.1.1-10";
+  version = "7.1.1-13";
 
   src = fetchFromGitHub {
     owner = "ImageMagick";
     repo = "ImageMagick";
     rev = finalAttrs.version;
-    hash = "sha256-W7s/j4R4C22hYVhye8TjDYHtDq/1Q4GGu/9lxyjk6sA=";
+    hash = "sha256-HrUka7VLF9YH23TxDQeQpulQf3ssSfYOhi29v2onvCE=";
   };
 
   outputs = [ "out" "dev" "doc" ]; # bin/ isn't really big
@@ -124,7 +124,7 @@ stdenv.mkDerivation (finalAttrs: {
   '';
 
   passthru.tests = {
-    version = testers.testVersion { package = imagemagick; };
+    version = testers.testVersion { package = finalAttrs.finalPackage; };
     inherit (python3.pkgs) img2pdf;
     pkg-config = testers.testMetaPkgConfig finalAttrs.finalPackage;
   };

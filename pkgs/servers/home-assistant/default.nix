@@ -3,7 +3,7 @@
 , callPackage
 , fetchFromGitHub
 , fetchPypi
-, python3
+, python311
 , substituteAll
 , ffmpeg-headless
 , inetutils
@@ -74,6 +74,16 @@ let
           hash = "sha256-AcImffYki1gnIaZp/1eacNjdDgjn6qinPJXq9jYtoRg=";
         };
         doCheck = false;
+      });
+
+      ha-av = super.av.overridePythonAttrs (oldAttrs: rec {
+        pname = "ha-av";
+        version = "10.1.0";
+
+        src = fetchPypi {
+          inherit pname version;
+          hash = "sha256-HjOu/A1U3CfoVq6VqxA621/9wXk8hFnTFWtdpnVoFr4=";
+        };
       });
 
       jaraco-abode = super.jaraco-abode.overridePythonAttrs (oldAttrs: rec {
@@ -183,16 +193,6 @@ let
         };
       });
 
-      python-roborock = super.python-roborock.overridePythonAttrs (oldAttrs: rec {
-        version = "0.8.3";
-        src = fetchFromGitHub {
-          owner = "humbertogontijo";
-          repo = "python-roborock";
-          rev = "refs/tags/v${version}";
-          hash = "sha256-O7MjxCQ4JwFFC2ibdU8hCPhFPQhV5/LsmDO6vRdyYL0=";
-        };
-      });
-
       python-slugify = super.python-slugify.overridePythonAttrs (oldAttrs: rec {
         pname = "python-slugify";
         version = "4.0.1";
@@ -241,15 +241,6 @@ let
         doCheck = false;
       });
 
-      sqlalchemy = super.sqlalchemy.overridePythonAttrs (oldAttrs: rec {
-        version = "2.0.12";
-        src = fetchPypi {
-          pname = "SQLAlchemy";
-          inherit version;
-          hash = "sha256-vd/FvR3uXbD93J2rJvgAwoPzJD5ygbvxByAP7TASX5w=";
-        };
-      });
-
       # Pinned due to API changes in 0.3.0
       tailscale = super.tailscale.overridePythonAttrs (oldAttrs: rec {
         version = "0.2.0";
@@ -261,25 +252,14 @@ let
         };
       });
 
-      # Pinned due to API changes in 0.4.0
-      vilfo-api-client = super.vilfo-api-client.overridePythonAttrs (oldAttrs: rec {
-        version = "0.3.3";
-        src = fetchFromGitHub {
-          owner = "ManneW";
-          repo = "vilfo-api-client-python";
-          rev = "v${version}";
-          sha256 = "1gy5gpsg99rcm1cc3m30232za00r9i46sp74zpd12p3vzz1wyyqf";
-        };
-      });
-
       # Pinned due to API changes ~1.0
       vultr = super.vultr.overridePythonAttrs (oldAttrs: rec {
         version = "0.1.2";
         src = fetchFromGitHub {
           owner = "spry-group";
           repo = "python-vultr";
-          rev = "v${version}";
-          sha256 = "1qjvvr2v9gfnwskdl0ayazpcmiyw9zlgnijnhgq9mcri5gq9jw5h";
+          rev = version;
+          hash = "sha256-sHCZ8Csxs5rwg1ZG++hP3MfK7ldeAdqm5ta9tEXeW+I=";
         };
       });
 
@@ -299,7 +279,7 @@ let
     })
   ];
 
-  python = python3.override {
+  python = python311.override {
     packageOverrides = lib.composeManyExtensions (defaultOverrides ++ [ packageOverrides ]);
   };
 
@@ -317,7 +297,7 @@ let
   extraBuildInputs = extraPackages python.pkgs;
 
   # Don't forget to run parse-requirements.py after updating
-  hassVersion = "2023.5.4";
+  hassVersion = "2023.7.3";
 
 in python.pkgs.buildPythonApplication rec {
   pname = "homeassistant";
@@ -333,7 +313,7 @@ in python.pkgs.buildPythonApplication rec {
   # Primary source is the pypi sdist, because it contains translations
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-mRiRKMafRkgAOshH/5i6yj379FEzZgXhkdkK557sMaQ=";
+    hash = "sha256-wYS7G3AD1G7UzXfrJxrHGpQTBLJFa7Qln1VU0pdcNro=";
   };
 
   # Secondary source is git for tests
@@ -341,10 +321,10 @@ in python.pkgs.buildPythonApplication rec {
     owner = "home-assistant";
     repo = "core";
     rev = "refs/tags/${version}";
-    hash = "sha256-r28BhC6lBIoxu7Wp/1h+qgPEDaUCqH4snyKk/h/vgyQ=";
+    hash = "sha256-2m0RpEQ4Rds9+JVQj5/HTmOZzYd4yWL+MfjQs923VL0=";
   };
 
-  nativeBuildInputs = with python3.pkgs; [
+  nativeBuildInputs = with python.pkgs; [
     setuptools
   ];
 
@@ -377,8 +357,9 @@ in python.pkgs.buildPythonApplication rec {
       "pip"
       "PyJWT"
       "pyOpenSSL"
+      "PyYAML"
       "requests"
-      "typing-extensions"
+      "typing_extensions"
       "voluptuous-serialize"
       "yarl"
     ];
@@ -500,7 +481,7 @@ in python.pkgs.buildPythonApplication rec {
       getPackages
       python
       supportedComponentsWithTests;
-    pythonPath = python3.pkgs.makePythonPath (componentBuildInputs ++ extraBuildInputs);
+    pythonPath = python.pkgs.makePythonPath (componentBuildInputs ++ extraBuildInputs);
     frontend = python.pkgs.home-assistant-frontend;
     intents = python.pkgs.home-assistant-intents;
     tests = {

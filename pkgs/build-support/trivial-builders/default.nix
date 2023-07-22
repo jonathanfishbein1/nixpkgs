@@ -88,6 +88,12 @@ rec {
       passAsFile = [ "buildCommand" ]
         ++ (derivationArgs.passAsFile or []);
     }
+    // lib.optionalAttrs (! derivationArgs?meta) {
+      pos = let args = builtins.attrNames derivationArgs; in
+        if builtins.length args > 0
+        then builtins.unsafeGetAttrPos (builtins.head args) derivationArgs
+        else null;
+    }
     // (lib.optionalAttrs runLocal {
           preferLocalBuild = true;
           allowSubstitutes = false;
@@ -141,7 +147,7 @@ rec {
     runCommand name
       { inherit text executable checkPhase allowSubstitutes preferLocalBuild;
         passAsFile = [ "text" ];
-        meta = lib.optionalAttrs (toString executable != "" && matches != null) {
+        meta = lib.optionalAttrs (executable && matches != null) {
           mainProgram = lib.head matches;
         } // meta;
       }
@@ -620,6 +626,10 @@ rec {
     script:
     runCommand name
       (substitutions // {
+        # TODO(@Artturin:) substitutions should be inside the env attrset
+        # but users are likely passing non-substitution arguments through substitutions
+        # turn off __structuredAttrs to unbreak substituteAll
+        __structuredAttrs = false;
         inherit meta;
         inherit depsTargetTargetPropagated;
         propagatedBuildInputs =

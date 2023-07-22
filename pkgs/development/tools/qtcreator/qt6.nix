@@ -1,7 +1,6 @@
 { stdenv
 , lib
 , fetchurl
-, fetchpatch
 , cmake
 , pkg-config
 , ninja
@@ -16,6 +15,7 @@
 , qtsvg
 , qttools
 , qtwebengine
+, qtwayland
 , qtshadertools
 , wrapQtAppsHook
 , yaml-cpp
@@ -29,26 +29,17 @@
 
 stdenv.mkDerivation rec {
   pname = "qtcreator";
-  version = "10.0.1";
+  version = "11.0.0";
 
   src = fetchurl {
     url = "https://download.qt.io/official_releases/${pname}/${lib.versions.majorMinor version}/${version}/qt-creator-opensource-src-${version}.tar.xz";
-    sha256 = "sha256-QWGwfc7A/I8xUpx9thC3FzFBKNoAei76haqbwzCXoWM=";
+    hash = "sha256-2/RPVfsDg00nC+3v9pWsT8Aq862oRfW575graxWaFDA=";
   };
-
-  patches = [
-    # fix build with Qt 6.5.1
-    # FIXME: remove for next release
-    (fetchpatch {
-      url = "https://github.com/qt-creator/qt-creator/commit/9817df63fb9eae342d5bf6f28f526aa09b17e8de.diff";
-      hash = "sha256-HIQuKroWUhJBWhVG3fyoBIFvezktCyQAuaZz/lvg7uk=";
-    })
-  ];
 
   nativeBuildInputs = [
     cmake
     pkg-config
-    qttools
+    (qttools.override { withClang = true; })
     wrapQtAppsHook
     python3
     ninja
@@ -60,6 +51,7 @@ stdenv.mkDerivation rec {
     qtsvg
     qtquick3d
     qtwebengine
+    qtwayland
     qtserialport
     qtshadertools
     qt5compat
