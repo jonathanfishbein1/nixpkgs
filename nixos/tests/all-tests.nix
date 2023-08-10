@@ -21,7 +21,7 @@ let
     if isAttrs val
     then
       if hasAttr "test" val then callTest val
-      else mapAttrs (n: s: discoverTests s) val
+      else mapAttrs (n: s: if n == "passthru" then s else discoverTests s) val
     else if isFunction val
       then
         # Tests based on make-test-python.nix will return the second lambda
@@ -89,6 +89,7 @@ in {
     extra-python-packages = handleTest ./nixos-test-driver/extra-python-packages.nix {};
     lib-extend = handleTestOn [ "x86_64-linux" "aarch64-linux" ] ./nixos-test-driver/lib-extend.nix {};
     node-name = runTest ./nixos-test-driver/node-name.nix;
+    busybox = runTest ./nixos-test-driver/busybox.nix;
   };
 
   # NixOS vm tests and non-vm unit tests
@@ -111,6 +112,7 @@ in {
   anuko-time-tracker = handleTest ./anuko-time-tracker.nix {};
   apcupsd = handleTest ./apcupsd.nix {};
   apfs = runTest ./apfs.nix;
+  appliance-repart-image = runTest ./appliance-repart-image.nix;
   apparmor = handleTest ./apparmor.nix {};
   atd = handleTest ./atd.nix {};
   atop = handleTest ./atop.nix {};
@@ -165,6 +167,7 @@ in {
   cgit = handleTest ./cgit.nix {};
   charliecloud = handleTest ./charliecloud.nix {};
   chromium = (handleTestOn ["aarch64-linux" "x86_64-linux"] ./chromium.nix {}).stable or {};
+  chrony = handleTestOn ["aarch64-linux" "x86_64-linux"] ./chrony.nix {};
   chrony-ptp = handleTestOn ["aarch64-linux" "x86_64-linux"] ./chrony-ptp.nix {};
   cinnamon = handleTest ./cinnamon.nix {};
   cjdns = handleTest ./cjdns.nix {};
@@ -203,6 +206,7 @@ in {
   couchdb = handleTest ./couchdb.nix {};
   cri-o = handleTestOn ["aarch64-linux" "x86_64-linux"] ./cri-o.nix {};
   cups-pdf = handleTest ./cups-pdf.nix {};
+  curl-impersonate = handleTest ./curl-impersonate.nix {};
   custom-ca = handleTest ./custom-ca.nix {};
   croc = handleTest ./croc.nix {};
   darling = handleTest ./darling.nix {};
@@ -214,7 +218,7 @@ in {
   disable-installer-tools = handleTest ./disable-installer-tools.nix {};
   discourse = handleTest ./discourse.nix {};
   dnscrypt-proxy2 = handleTestOn ["x86_64-linux"] ./dnscrypt-proxy2.nix {};
-  dnscrypt-wrapper = handleTestOn ["x86_64-linux"] ./dnscrypt-wrapper {};
+  dnscrypt-wrapper = runTestOn ["x86_64-linux"] ./dnscrypt-wrapper;
   dnsdist = handleTest ./dnsdist.nix {};
   doas = handleTest ./doas.nix {};
   docker = handleTestOn ["aarch64-linux" "x86_64-linux"] ./docker.nix {};
@@ -249,6 +253,7 @@ in {
   envoy = handleTest ./envoy.nix {};
   ergo = handleTest ./ergo.nix {};
   ergochat = handleTest ./ergochat.nix {};
+  eris-server = handleTest ./eris-server.nix {};
   esphome = handleTest ./esphome.nix {};
   etc = pkgs.callPackage ../modules/system/etc/test.nix { inherit evalMinimalConfig; };
   activation = pkgs.callPackage ../modules/system/activation/test.nix { };
@@ -532,11 +537,12 @@ in {
   nginx-http3 = handleTest ./nginx-http3.nix {};
   nginx-modsecurity = handleTest ./nginx-modsecurity.nix {};
   nginx-njs = handleTest ./nginx-njs.nix {};
+  nginx-proxyprotocol = handleTest ./nginx-proxyprotocol {};
   nginx-pubhtml = handleTest ./nginx-pubhtml.nix {};
   nginx-sandbox = handleTestOn ["x86_64-linux"] ./nginx-sandbox.nix {};
   nginx-sso = handleTest ./nginx-sso.nix {};
+  nginx-status-page = handleTest ./nginx-status-page.nix {};
   nginx-variants = handleTest ./nginx-variants.nix {};
-  nginx-proxyprotocol = handleTest ./nginx-proxyprotocol {};
   nifi = handleTestOn ["x86_64-linux"] ./web-apps/nifi.nix {};
   nitter = handleTest ./nitter.nix {};
   nix-ld = handleTest ./nix-ld.nix {};
@@ -770,6 +776,7 @@ in {
   systemd-portabled = handleTest ./systemd-portabled.nix {};
   systemd-repart = handleTest ./systemd-repart.nix {};
   systemd-shutdown = handleTest ./systemd-shutdown.nix {};
+  systemd-sysupdate = runTest ./systemd-sysupdate.nix;
   systemd-timesyncd = handleTest ./systemd-timesyncd.nix {};
   systemd-user-tmpfiles-rules = handleTest ./systemd-user-tmpfiles-rules.nix {};
   systemd-misc = handleTest ./systemd-misc.nix {};

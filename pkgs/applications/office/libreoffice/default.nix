@@ -1,5 +1,6 @@
 { stdenv
 , fetchurl
+, fetchpatch
 , lib
 , substituteAll
 , pam
@@ -213,6 +214,29 @@ in
     tar -xf ${srcs.help}
     tar -xf ${srcs.translations}
   '';
+
+  # Remove build config to reduce the amount of `-dev` outputs in the
+  # runtime closure. This was introduced in upstream commit
+  # cbfac11330882c7d0a817b6c37a08b2ace2b66f4, so the patch doesn't apply
+  # for 7.4.
+  patches = lib.optionals (lib.versionAtLeast version "7.5") [
+    ./0001-Strip-away-BUILDCONFIG.patch
+  ] ++ [
+    (fetchpatch {
+      name = "fix-curl-8.2.patch";
+      url = "https://github.com/LibreOffice/core/commit/2a68dc02bd19a717d3c86873206fabed1098f228.diff";
+      hash = "sha256-C+kts+oaLR3+GbnX/wrFguF7SzgerNataxP0SPxhyY8=";
+    })
+  ];
+
+  # libreoffice tries to reference the BUILDCONFIG (e.g. PKG_CONFIG_PATH)
+  # in the binary causing the closure size to blow up because of many unnecessary
+  # dependencies to dev outputs. This behavior was patched away in nixpkgs
+  # (see above), make sure these don't leak again by accident.
+  disallowedRequisites = lib.optionals (!kdeIntegration)
+    (lib.concatMap
+      (x: lib.optional (x?dev) x.dev)
+      buildInputs);
 
   ### QT/KDE
   #

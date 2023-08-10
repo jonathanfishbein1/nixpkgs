@@ -2,12 +2,12 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "fava";
-  version = "1.25";
+  version = "1.25.1";
   format = "pyproject";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-3SxFvvYZupYOsQU/n+zq3hamyWaaN9guoiV8km9mHjM=";
+    hash = "sha256-RJbPqj6hXqf8D5G8zrg0BAYfxSRDfUgRNGwX+LZlPPY=";
   };
 
   nativeBuildInputs = with python3.pkgs; [ setuptools-scm ];
@@ -19,7 +19,7 @@ python3.pkgs.buildPythonApplication rec {
     click
     flask
     flask-babel
-    jaraco_functools
+    jaraco-functools
     jinja2
     markdown2
     ply
