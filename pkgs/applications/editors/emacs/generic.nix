@@ -42,7 +42,7 @@
 , libtiff
 , libwebp
 , libxml2
-, llvmPackages_6
+, llvmPackages_14
 , m17n_lib
 , makeWrapper
 , motif
@@ -59,19 +59,6 @@
 , webkitgtk
 , wrapGAppsHook
 
-# macOS dependencies for NS and macPort
-, AppKit
-, Carbon
-, Cocoa
-, GSS
-, IOKit
-, ImageCaptureCore
-, ImageIO
-, OSAKit
-, Quartz
-, QuartzCore
-, WebKit
-
 # Boolean flags
 , nativeComp ? null
 , withNativeCompilation ?
@@ -87,6 +74,7 @@
 , withGTK2 ? false
 , withGTK3 ? withPgtk && !noGui
 , withGconf ? false
+, withGlibNetworking ? withPgtk || withGTK3 || (withX && withXwidgets)
 , withGpm ? stdenv.isLinux
 , withImageMagick ? lib.versionOlder version "27" && (withX || withNS)
 , withMotif ? false
@@ -109,6 +97,21 @@
   else if withMotif then "motif"
   else if withAthena then "athena"
   else "lucid")
+
+# macOS dependencies for NS and macPort
+, Accelerate
+, AppKit
+, Carbon
+, Cocoa
+, GSS
+, IOKit
+, ImageCaptureCore
+, ImageIO
+, OSAKit
+, Quartz
+, QuartzCore
+, UniformTypeIdentifiers
+, WebKit
 }:
 
 assert (withGTK2 && !withNS && variant != "macport") -> withX;
@@ -134,7 +137,7 @@ let
   ];
 
   inherit (if variant == "macport"
-           then llvmPackages_6.stdenv
+           then llvmPackages_14.stdenv
            else stdenv) mkDerivation;
 in
 mkDerivation (finalAttrs: (lib.optionalAttrs withNativeCompilation {
@@ -244,7 +247,7 @@ mkDerivation (finalAttrs: (lib.optionalAttrs withNativeCompilation {
     gtk3-x11
   ] ++ lib.optionals (withX && withMotif) [
     motif
-  ] ++ lib.optionals (withX && withXwidgets) [
+  ] ++ lib.optionals withGlibNetworking [
     glib-networking
   ] ++ lib.optionals withNativeCompilation [
     libgccjit
@@ -286,6 +289,7 @@ mkDerivation (finalAttrs: (lib.optionalAttrs withNativeCompilation {
     GSS
     ImageIO
   ] ++ lib.optionals (variant == "macport") [
+    Accelerate
     AppKit
     Carbon
     Cocoa
@@ -293,6 +297,7 @@ mkDerivation (finalAttrs: (lib.optionalAttrs withNativeCompilation {
     OSAKit
     Quartz
     QuartzCore
+    UniformTypeIdentifiers
     WebKit
     # TODO are these optional?
     GSS
@@ -335,6 +340,11 @@ mkDerivation (finalAttrs: (lib.optionalAttrs withNativeCompilation {
   ++ lib.optional withXinput2 "--with-xinput2"
   ++ lib.optional withXwidgets "--with-xwidgets"
   ;
+
+  # Fixes intermittent segfaults when compiled with LLVM >= 7.0.
+  # See https://github.com/NixOS/nixpkgs/issues/127902
+  env.NIX_CFLAGS_COMPILE = lib.optionalString (variant == "macport")
+    "-include ${./macport_noescape_noop.h}";
 
   enableParallelBuilding = true;
 
