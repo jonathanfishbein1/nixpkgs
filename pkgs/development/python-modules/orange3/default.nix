@@ -1,21 +1,21 @@
 { lib
-, buildPythonPackage
-, copyDesktopItems
-, fetchurl
-, makeDesktopItem
-, fetchFromGitHub
-, nix-update-script
-, python
 , baycomp
 , bottleneck
+, buildPythonPackage
 , chardet
+, copyDesktopItems
 , cython
+, fetchFromGitHub
+, fetchurl
 , httpx
 , joblib
 , keyring
 , keyrings-alt
+, makeDesktopItem
 , matplotlib
+, nix-update-script
 , numpy
+, oldest-supported-numpy
 , openpyxl
 , opentsne
 , orange-canvas-core
@@ -23,33 +23,42 @@
 , pandas
 , pyqtgraph
 , pyqtwebengine
+, python
 , python-louvain
+, pythonOlder
 , pyyaml
 , qt5
 , qtconsole
+, recommonmark
 , requests
 , scikit-learn
 , scipy
-, sphinx
 , serverfiles
+, setuptools
+, sphinx
+, wheel
 , xlrd
 , xlsxwriter
 }:
 
 let
-self = buildPythonPackage rec {
+  self = buildPythonPackage rec {
     pname = "orange3";
-    version = "3.35.0";
-    format = "pyproject";
+    version = "3.36.2";
+    format = "setuptools";
+
+    disabled = pythonOlder "3.7";
 
     src = fetchFromGitHub {
       owner = "biolab";
       repo = "orange3";
       rev = "refs/tags/${version}";
-      hash = "sha256-dj/Z4uOjA4nidd45dnHZDyHZP6Fy/MGC8asqOPV7U7A=";
+      hash = "sha256-v9lk5vGhBaR2PHZ+Jq0hy1WaCsbeLe+vZlTaHBkfacU=";
     };
 
     postPatch = ''
+      substituteInPlace pyproject.toml \
+        --replace "setuptools>=41.0.0,<50.0" "setuptools"
       sed -i 's;\(scikit-learn\)[^$]*;\1;g' requirements-core.txt
       sed -i 's;pyqtgraph[^$]*;;g' requirements-gui.txt # TODO: remove after bump with a version greater than 0.13.1
     '';
@@ -57,8 +66,12 @@ self = buildPythonPackage rec {
     nativeBuildInputs = [
       copyDesktopItems
       cython
+      oldest-supported-numpy
       qt5.wrapQtAppsHook
+      recommonmark
+      setuptools
       sphinx
+      wheel
     ];
 
     enableParallelBuilding = true;
@@ -153,12 +166,14 @@ self = buildPythonPackage rec {
       });
     };
 
-    meta = {
-      mainProgram = "orange-canvas";
+    meta = with lib; {
       description = "Data mining and visualization toolbox for novice and expert alike";
       homepage = "https://orangedatamining.com/";
-      license = [ lib.licenses.gpl3Plus ];
-      maintainers = [ lib.maintainers.lucasew ];
+      changelog = "https://github.com/biolab/orange3/blob/${version}/CHANGELOG.md";
+      license = with licenses; [ gpl3Plus ];
+      maintainers = with maintainers; [ lucasew ];
+      mainProgram = "orange-canvas";
     };
   };
-in self
+in
+self

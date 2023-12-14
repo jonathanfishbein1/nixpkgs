@@ -36,16 +36,16 @@ stdenv.mkDerivation (finalAttrs: {
   ] ++ lib.optionals withExamples [
     "bin"
   ] ++ lib.optionals withDocumentation [
-    "doc"
+    "devdoc"
   ];
 
   patches = [
     # Improves install locations of demo & docs
     # Remove when https://gitlab.com/ubports/development/core/geonames/-/merge_requests/3 merged & in release
     (fetchpatch {
-      name = "0001-geonames-Use-GNUInstallDirs-more.patch";
-      url = "https://gitlab.com/OPNA2608/geonames/-/commit/e64a391fc213b2629da1c8bbf975fd62a2973c51.patch";
-      hash = "sha256-HPYDtIy1WUrZLPzvKh4aezrT/LniZkNX+PeQ9YB85RY=";
+      name = "0001-geonames-Use-CMAKE_INSTALL_BINDIR-for-install.patch";
+      url = "https://gitlab.com/OPNA2608/geonames/-/commit/3bca6d4d02843aed851a0a7480d5cd5ac02b4cda.patch";
+      hash = "sha256-vwffuMKpIqymYaiGEvnNeVXLmnz5e4aBpg55fnNbjKs=";
     })
   ];
 
@@ -73,7 +73,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   # Tests need to be able to check locale
-  LC_ALL = lib.optionalString finalAttrs.doCheck "en_US.UTF-8";
+  LC_ALL = lib.optionalString finalAttrs.finalPackage.doCheck "en_US.UTF-8";
   nativeCheckInputs = [
     glibcLocales
   ];
@@ -86,7 +86,7 @@ stdenv.mkDerivation (finalAttrs: {
   cmakeFlags = [
     "-DWANT_DOC=${lib.boolToString withDocumentation}"
     "-DWANT_DEMO=${lib.boolToString withExamples}"
-    "-DWANT_TESTS=${lib.boolToString finalAttrs.doCheck}"
+    "-DWANT_TESTS=${lib.boolToString finalAttrs.finalPackage.doCheck}"
     # Keeps finding & using glib-compile-resources from buildInputs otherwise
     "-DCMAKE_PROGRAM_PATH=${lib.makeBinPath [ buildPackages.glib.dev ]}"
   ] ++ lib.optionals (!stdenv.buildPlatform.canExecute stdenv.hostPlatform) [

@@ -1,23 +1,32 @@
-{ buildPythonPackage, fetchPypi, lib, cryptography, setuptools }:
+{ lib
+, buildPythonPackage
+, fetchPypi
+, cryptography
+, setuptools
+}:
 
 buildPythonPackage rec {
   pname = "cryptography-vectors";
   # The test vectors must have the same version as the cryptography package
   inherit (cryptography) version;
-  format = "pyproject";
+  pyproject = true;
 
   src = fetchPypi {
     pname = "cryptography_vectors";
     inherit version;
-    hash = "sha256-Ao3/lKhSLKgYsRKV/xLfVfNI8zoZPAWX3f6COeU9FYI=";
+    hash = "sha256-ezb5drbljMGAExDhyTxYTGU503Haf4U47dj8Rj3IDVs=";
   };
 
-  nativeBuildInputs = [ setuptools ];
+  nativeBuildInputs = [
+    setuptools
+  ];
 
   # No tests included
   doCheck = false;
 
-  pythonImportsCheck = [ "cryptography_vectors" ];
+  pythonImportsCheck = [
+    "cryptography_vectors"
+  ];
 
   meta = with lib; {
     description = "Test vectors for the cryptography package";

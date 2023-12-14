@@ -2,16 +2,16 @@
 
 buildGoModule rec {
   pname = "carapace";
-  version = "0.26.0";
+  version = "0.28.5";
 
   src = fetchFromGitHub {
     owner = "rsteube";
     repo = "${pname}-bin";
     rev = "v${version}";
-    sha256 = "sha256-1e2hrAoFtnG1lU7evYnJXs65qmLNvO6fO9kPqjv66YE=";
+    hash = "sha256-mprwDx1SvvT96MR1YgLwIJaEHCknCkbJ9zq0HfNJy/Y=";
   };
 
-  vendorHash = "sha256-T0N6e96F/4HkHKYNiPFME/PUJGh+pbTmmb4SdZiDVgw=";
+  vendorHash = "sha256-rR0mLO8jjhTPySQ/BTegNe9kd2DudULOuYBBB/P9K1s=";
 
   ldflags = [
     "-s"
@@ -34,5 +34,6 @@ buildGoModule rec {
     homepage = "https://rsteube.github.io/carapace-bin/";
     maintainers = with maintainers; [ star-szr ];
     license = licenses.mit;
+    mainProgram = "carapace";
   };
 }

@@ -6,16 +6,16 @@
 
 buildGoModule rec {
   pname = "dasel";
-  version = "2.3.4";
+  version = "2.5.0";
 
   src = fetchFromGitHub {
     owner = "TomWright";
     repo = "dasel";
     rev = "v${version}";
-    sha256 = "sha256-/1CTtRTLgMlmFeubq3ebGnA9Do1mW6TtAXsCwi1JFmk=";
+    hash = "sha256-frd4jNn5uruz9oX40ly/AR5I/uKRIfQ8IjOlIvlsOlY=";
   };
 
-  vendorHash = "sha256-cLf0MzEAykmtnPjT2vGOSPwIXJP6BhxheUaicT7o/X4=";
+  vendorHash = "sha256-B3d+pbk0smBXqcJnac5he0TZPLiT1cLtz02OAGfqhC0=";
 
   ldflags = [
     "-s" "-w" "-X github.com/tomwright/dasel/v2/internal.Version=${version}"

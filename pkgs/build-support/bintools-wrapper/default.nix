@@ -80,7 +80,8 @@ let
     else if targetPlatform.libc == "nblibc"           then "${sharedLibraryLoader}/libexec/ld.elf_so"
     else if targetPlatform.system == "i686-linux"     then "${sharedLibraryLoader}/lib/ld-linux.so.2"
     else if targetPlatform.system == "x86_64-linux"   then "${sharedLibraryLoader}/lib/ld-linux-x86-64.so.2"
-    else if targetPlatform.system == "powerpc64le-linux" then "${sharedLibraryLoader}/lib/ld64.so.2"
+    # ELFv1 (.1) or ELFv2 (.2) ABI
+    else if targetPlatform.isPower64                  then "${sharedLibraryLoader}/lib/ld64.so.*"
     # ARM with a wildcard, which can be "" or "-armhf".
     else if (with targetPlatform; isAarch32 && isLinux)   then "${sharedLibraryLoader}/lib/ld-linux*.so.3"
     else if targetPlatform.system == "aarch64-linux"  then "${sharedLibraryLoader}/lib/ld-linux-aarch64.so.1"
@@ -300,12 +301,6 @@ stdenv.mkDerivation {
       hardening_unsupported_flags+=" relro bindnow"
     ''
 
-    + optionalString (libc != null && targetPlatform.isAvr) ''
-      for isa in avr5 avr3 avr4 avr6 avr25 avr31 avr35 avr51 avrxmega2 avrxmega4 avrxmega5 avrxmega6 avrxmega7 tiny-stack; do
-        echo "-L${getLib libc}/avr/lib/$isa" >> $out/nix-support/libc-cflags
-      done
-    ''
-
     + optionalString stdenv.targetPlatform.isDarwin ''
       echo "-arch ${targetPlatform.darwinArch}" >> $out/nix-support/libc-ldflags
     ''
@@ -321,10 +316,10 @@ stdenv.mkDerivation {
     ''
 
     ###
-    ### Remove LC_UUID
+    ### Remove certain timestamps from final binaries
     ###
     + optionalString (stdenv.targetPlatform.isDarwin && !(bintools.isGNU or false)) ''
-      echo "-no_uuid" >> $out/nix-support/libc-ldflags-before
+      echo "export ZERO_AR_DATE=1" >> $out/nix-support/setup-hook
     ''
 
     + ''

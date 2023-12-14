@@ -1,27 +1,29 @@
 { lib
-, buildGoModule
+, buildGo121Module
 , fetchFromGitHub
 , installShellFiles
 }:
 
-buildGoModule rec {
+buildGo121Module rec {
   pname = "timoni";
-  version = "0.11.1";
+  version = "0.17.0";
 
   src = fetchFromGitHub {
     owner = "stefanprodan";
     repo = "timoni";
     rev = "v${version}";
-    hash = "sha256-o5s/3c6fi6aYzKIBKq23U6FtzueDN0WVsG/wdCMEjDU=";
+    hash = "sha256-KhDig31BGMmKVrLVFcTXNKjsyAUTb6KEX5PJV2rkMgM=";
   };
 
-  vendorHash = "sha256-rMLswgEWWaDupBHDXs/JATaaw4n5D+LjlM72eq8hPAM=";
+  vendorHash = "sha256-3RbWHLQLLh/omGttY2wWv2nsuuTE8ALAqgQaiJY/EjI=";
 
   subPackages = [ "cmd/timoni" ];
   nativeBuildInputs = [ installShellFiles ];
 
   # Some tests require running Kubernetes instance
   doCheck = false;
+
+  passthru.updateScript = ./update.sh;
 
   ldflags = [
     "-s"

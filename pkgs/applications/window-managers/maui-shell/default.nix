@@ -83,5 +83,8 @@ mkDerivation rec {
     homepage = "https://github.com/Nitrux/maui-shell";
     license = licenses.lgpl3;
     maintainers = with maintainers; [ onny ];
+    platforms = platforms.linux;
+    # https://github.com/Nitrux/maui-shell/issues/56
+    broken = true;
   };
 }

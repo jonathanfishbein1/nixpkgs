@@ -1,20 +1,21 @@
 { lib
 , buildGoModule
 , fetchFromGitHub
+, nix-update-script
 }:
 
 buildGoModule rec {
   pname = "pocketbase";
-  version = "0.16.10";
+  version = "0.20.0";
 
   src = fetchFromGitHub {
     owner = "pocketbase";
-    repo = pname;
+    repo = "pocketbase";
     rev = "v${version}";
-    sha256 = "sha256-BH3hJ+5xAJkGj2HoKpee+ZNgMmyQoHEVI0wsXRwIdGw=";
+    hash = "sha256-bVquPokjZn260Xs1EqSRGQY7+gr/qLwVtZkKT8Lc1DM=";
   };
 
-  vendorHash = "sha256-h3lkmpHEMr/aueP+lJpa9HJCidEpm7xSKws28+ZSeQA=";
+  vendorHash = "sha256-Y70GNXThSZdG+28/ZQgxXhyZWAtMu0OM97Yhmo0Eigc=";
 
   # This is the released subpackage from upstream repo
   subPackages = [ "examples/base" ];
@@ -32,15 +33,13 @@ buildGoModule rec {
     mv $out/bin/base $out/bin/pocketbase
   '';
 
-  patches = [
-    # To provide a consistent update experience, we remove the built in update method
-    ./remove-update-method.patch
-  ];
+  passthru.updateScript = nix-update-script { };
 
   meta = with lib; {
     description = "Open Source realtime backend in 1 file";
     homepage = "https://github.com/pocketbase/pocketbase";
     license = licenses.mit;
     maintainers = with maintainers; [ dit7ya thilobillerbeck ];
+    mainProgram = "pocketbase";
   };
 }

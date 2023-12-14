@@ -13,6 +13,7 @@ buildPythonPackage rec {
   pname = "cypari2";
   # upgrade may break sage, please test the sage build or ping @timokau on upgrade
   version = "2.1.3";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
@@ -24,7 +25,7 @@ buildPythonPackage rec {
     # (https://trac.sagemath.org/ticket/27267). depends on Cython patch.
     (fetchpatch {
       name = "use-trashcan-for-gen.patch";
-      url = "https://git.sagemath.org/sage.git/plain/build/pkgs/cypari/patches/trashcan.patch?id=b6ea17ef8e4d652de0a85047bac8d41e90b25555";
+      url = "https://raw.githubusercontent.com/sagemath/sage/b6ea17ef8e4d652de0a85047bac8d41e90b25555/build/pkgs/cypari/patches/trashcan.patch";
       hash = "sha256-w4kktWb9/aR9z4CjrUvAMOxEwRN2WkubaKzQttN8rU8=";
     })
   ];
@@ -42,7 +43,7 @@ buildPythonPackage rec {
 
   nativeBuildInputs = [
     pari
-    python.pythonForBuild.pkgs.pip
+    python.pythonOnBuildForHost.pkgs.pip
   ];
 
   buildInputs = [

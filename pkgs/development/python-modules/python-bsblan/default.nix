@@ -16,7 +16,7 @@
 
 buildPythonPackage rec {
   pname = "python-bsblan";
-  version = "0.5.15";
+  version = "0.5.16";
   format = "pyproject";
 
   disabled = pythonOlder "3.9";
@@ -25,7 +25,7 @@ buildPythonPackage rec {
     owner = "liudger";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-PNgv3QXl3iyDX0KOn1egQrt6D64i3eCUyCPtXe94y0U=";
+    hash = "sha256-m80lnNd1ANddV0d/w3S7+QWzIPRklDZsWMO2g1hgEoQ=";
   };
 
   postPatch = ''
@@ -53,6 +53,12 @@ buildPythonPackage rec {
     pytest-asyncio
     pytest-mock
     pytestCheckHook
+  ];
+
+  disabledTests = lib.optionals (lib.versionAtLeast aiohttp.version "3.9.0") [
+    # https://github.com/liudger/python-bsblan/issues/808
+    "test_http_error400"
+    "test_not_authorized_401_response"
   ];
 
   pythonImportsCheck = [

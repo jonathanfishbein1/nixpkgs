@@ -2,13 +2,13 @@
 
 buildGoModule rec {
   pname = "simplotask";
-  version = "1.11.4";
+  version = "1.12.0";
 
   src = fetchFromGitHub {
     owner = "umputun";
     repo = "spot";
     rev = "v${version}";
-    hash = "sha256-G/T7LF8ujlCSbK1Lv2h43OZVx52yrLDr+6e/WxhaHOo=";
+    hash = "sha256-bbn6RLkAAlQeHsaMmb34FFrhaYvouf8rSOJpGdYE7Y4=";
   };
 
   vendorHash = null;
@@ -29,7 +29,7 @@ buildGoModule rec {
 
   meta = with lib; {
     description = "A tool for effortless deployment and configuration management";
-    homepage = "https://simplotask.com/";
+    homepage = "https://spot.umputun.dev/";
     maintainers = with maintainers; [ sikmir ];
     license = licenses.mit;
     mainProgram = "spot";

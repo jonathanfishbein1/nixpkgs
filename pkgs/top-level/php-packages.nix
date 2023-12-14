@@ -1,4 +1,6 @@
 { stdenv
+, config
+, callPackages
 , lib
 , pkgs
 , phpPackage
@@ -28,9 +30,11 @@
 , openldap
 , openssl_1_1
 , openssl
+, overrideSDK
 , pam
 , pcre2
 , postgresql
+, bison
 , re2c
 , readline
 , rsync
@@ -43,11 +47,14 @@
 }:
 
 lib.makeScope pkgs.newScope (self: with self; {
-  buildPecl = import ../build-support/build-pecl.nix {
+  buildPecl = callPackage ../build-support/php/build-pecl.nix {
     php = php.unwrapped;
-    inherit lib;
-    inherit (pkgs) stdenv autoreconfHook fetchurl re2c nix-update-script;
   };
+
+  composerHooks = callPackages ../build-support/php/hooks { };
+
+  mkComposerRepository = callPackage ../build-support/php/build-composer-repository.nix { };
+  buildComposerProject = callPackage ../build-support/php/build-composer-project.nix { };
 
   # Wrap mkDerivation to prepend pname with "php-" to make names consistent
   # with how buildPecl does it and make the file easier to overview.
@@ -101,13 +108,21 @@ lib.makeScope pkgs.newScope (self: with self; {
         autoconf
         pkg-config
         re2c
+        bison
       ];
 
       inherit configureFlags internalDeps buildInputs zendExtension doCheck;
 
       preConfigurePhases = [
+        "genfiles"
         "cdToExtensionRootPhase"
       ];
+
+      genfiles = ''
+        if [ -f "scripts/dev/genfiles" ]; then
+          ./scripts/dev/genfiles
+        fi
+      '';
 
       cdToExtensionRootPhase = ''
         # Go to extension source root.
@@ -169,6 +184,8 @@ lib.makeScope pkgs.newScope (self: with self; {
   tools = {
     box = callPackage ../development/php-packages/box { };
 
+    castor = callPackage ../development/php-packages/castor { };
+
     composer = callPackage ../development/php-packages/composer { };
 
     deployer = callPackage ../development/php-packages/deployer { };
@@ -191,6 +208,8 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     phpmd = callPackage ../development/php-packages/phpmd { };
 
+    phpspy = callPackage ../development/php-packages/phpspy { };
+
     phpstan = callPackage ../development/php-packages/phpstan { };
 
     psalm = callPackage ../development/php-packages/psalm { };
@@ -208,10 +227,6 @@ lib.makeScope pkgs.newScope (self: with self; {
   # 2. The contrib extensions available
   # 3. The core extensions
   extensions =
-  # Contrib conditional extensions
-   lib.optionalAttrs (!(lib.versionAtLeast php.version "8.3")) {
-    blackfire = callPackage ../development/tools/misc/blackfire/php-probe.nix { inherit php; };
-  } //
   # Contrib extensions
   {
     amqp = callPackage ../development/php-packages/amqp { };
@@ -220,9 +235,14 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     ast = callPackage ../development/php-packages/ast { };
 
+    blackfire = callPackage ../development/tools/misc/blackfire/php-probe.nix { inherit php; };
+
     couchbase = callPackage ../development/php-packages/couchbase { };
 
     datadog_trace = callPackage ../development/php-packages/datadog_trace {
+      buildPecl = buildPecl.override {
+        stdenv = if stdenv.isDarwin then overrideSDK stdenv "11.0" else stdenv;
+      };
       inherit (pkgs) darwin;
     };
 
@@ -244,7 +264,13 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     maxminddb = callPackage ../development/php-packages/maxminddb { };
 
+    memcache = callPackage ../development/php-packages/memcache { };
+
     memcached = callPackage ../development/php-packages/memcached { };
+
+    meminfo = callPackage ../development/php-packages/meminfo { };
+
+    memprof = callPackage ../development/php-packages/memprof { };
 
     mongodb = callPackage ../development/php-packages/mongodb {
       inherit (pkgs) darwin;
@@ -282,6 +308,8 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     pdo_sqlsrv = callPackage ../development/php-packages/pdo_sqlsrv { };
 
+    phalcon = callPackage ../development/php-packages/phalcon { };
+
     pinba = callPackage ../development/php-packages/pinba { };
 
     protobuf = callPackage ../development/php-packages/protobuf { };
@@ -292,11 +320,15 @@ lib.makeScope pkgs.newScope (self: with self; {
 
     relay = callPackage ../development/php-packages/relay { inherit php; };
 
+    rrd = callPackage ../development/php-packages/rrd { };
+
     smbclient = callPackage ../development/php-packages/smbclient { };
 
     snuffleupagus = callPackage ../development/php-packages/snuffleupagus {
       inherit (pkgs) darwin;
     };
+
+    spx = callPackage ../development/php-packages/spx { };
 
     sqlsrv = callPackage ../development/php-packages/sqlsrv { };
 
@@ -311,6 +343,8 @@ lib.makeScope pkgs.newScope (self: with self; {
     xdebug = callPackage ../development/php-packages/xdebug { };
 
     yaml = callPackage ../development/php-packages/yaml { };
+  } // lib.optionalAttrs config.allowAliases {
+    php-spx = throw "php-spx is deprecated, use spx instead";
   } // (
     # Core extensions
     let
@@ -438,9 +472,11 @@ lib.makeScope pkgs.newScope (self: with self; {
         }
         {
           name = "opcache";
-          buildInputs = [ pcre2 ] ++ lib.optionals (!stdenv.isDarwin) [
-            valgrind.dev
-          ];
+          buildInputs = [ pcre2 ] ++
+            lib.optional
+              (!stdenv.isDarwin && lib.meta.availableOn stdenv.hostPlatform valgrind)
+              valgrind.dev;
+          configureFlags = lib.optional php.ztsSupport "--disable-opcache-jit";
           zendExtension = true;
           postPatch = lib.optionalString stdenv.isDarwin ''
             # Tests are flaky on darwin
@@ -567,7 +603,15 @@ lib.makeScope pkgs.newScope (self: with self; {
           doCheck = false;
         }
         { name = "sodium"; buildInputs = [ libsodium ]; }
-        { name = "sqlite3"; buildInputs = [ sqlite ]; }
+        {
+          name = "sqlite3";
+          buildInputs = [ sqlite ];
+
+          # The `sqlite3_bind_bug68849.phpt` test is currently broken for i686 Linux systems since sqlite 3.43, cf.:
+          # - https://github.com/php/php-src/issues/12076
+          # - https://www.sqlite.org/forum/forumpost/abbb95376ec6cd5f
+          patches = lib.optional (stdenv.isi686 && stdenv.isLinux) ../development/interpreters/php/skip-sqlite3_bind_bug68849.phpt.patch;
+        }
         { name = "sysvmsg"; }
         { name = "sysvsem"; }
         { name = "sysvshm"; }

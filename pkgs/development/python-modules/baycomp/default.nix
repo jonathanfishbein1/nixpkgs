@@ -10,11 +10,12 @@
 
 buildPythonPackage rec {
   pname = "baycomp";
-  version = "1.0.2";
+  version = "1.0.3";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-xDRywWvXzfSITdTHPdMH5KPacJf+Scg81eiNdRQpI7A=";
+    hash = "sha256-MrJa17FtWyUd259hEKMtezlTuYcJbaHSXvJ3k10l2uw=";
   };
 
   propagatedBuildInputs = [

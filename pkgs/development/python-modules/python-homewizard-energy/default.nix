@@ -1,47 +1,42 @@
 { lib
 , aiohttp
 , aresponses
-, awesomeversion
+, async-timeout
 , buildPythonPackage
 , fetchFromGitHub
-, fetchpatch
 , poetry-core
-, protobuf
 , pytest-asyncio
 , pytestCheckHook
 , pythonOlder
+, syrupy
 }:
 
 buildPythonPackage rec {
   pname = "python-homewizard-energy";
-  version = "2.0.2";
+  version = "4.1.1";
   format = "pyproject";
 
   disabled = pythonOlder "3.9";
 
   src = fetchFromGitHub {
     owner = "DCSBL";
-    repo = pname;
+    repo = "python-homewizard-energy";
     rev = "refs/tags/v${version}";
-    hash = "sha256-XTSnIL/hBL1Rsyv/tBce/WCvA3n7mZern0v3i6gTOeA=";
+    hash = "sha256-p7uwodjC+wTGrlKf4i4ZRTPg9Qh9krsmwPpWNdF6J4U=";
   };
 
-  patches = [
-    # https://github.com/DCSBL/python-homewizard-energy/pull/235
-    (fetchpatch {
-      name = "remove-setuptools-dependency.patch";
-      url = "https://github.com/DCSBL/python-homewizard-energy/commit/b006b0bc1f3d0b4a7569654a1afa90dd4cffaf18.patch";
-      hash = "sha256-WQeepxiYnBfFcQAmrc3pavBz5j1Qo0HmUcOxsK/pr50=";
-    })
-  ];
+  postPatch = ''
+    substituteInPlace pyproject.toml \
+      --replace 'version = "0.0.0"' 'version = "${version}"'
+  '';
 
   nativeBuildInputs = [
     poetry-core
   ];
 
   propagatedBuildInputs = [
-    awesomeversion
     aiohttp
+    async-timeout
   ];
 
   __darwinAllowLocalNetworking = true;
@@ -50,6 +45,7 @@ buildPythonPackage rec {
     aresponses
     pytest-asyncio
     pytestCheckHook
+    syrupy
   ];
 
   pythonImportsCheck = [
@@ -58,8 +54,8 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Library to communicate with HomeWizard Energy devices";
-    homepage = "https://github.com/DCSBL/python-homewizard-energy";
-    changelog = "https://github.com/DCSBL/python-homewizard-energy/releases/tag/v${version}";
+    homepage = "https://github.com/homewizard/python-homewizard-energy";
+    changelog = "https://github.com/homewizard/python-homewizard-energy/releases/tag/v${version}";
     license = licenses.asl20;
     maintainers = with maintainers; [ fab ];
   };

@@ -1,15 +1,15 @@
 { lib, fetchFromGitHub }:
 rec {
-  version = "1.5.4";
+  version = "1.5.10";
 
   src = fetchFromGitHub {
     owner = "TandoorRecipes";
     repo = "recipes";
     rev = version;
-    hash = "sha256-cVrgmRDzuLzl2+4UcrLRdrP6ZFWMkavu9OEogNas2fA=";
+    hash = "sha256-CkqNPG57e76TT/vF9lscS6m2FbXOvOfqiT/9aM2Il9E=";
   };
 
-  yarnHash = "sha256-0u9P/OsoThP8gonrzcnO5zhIboWMI1mTsXHlbt7l9oE=";
+  yarnHash = "sha256-atl2XrY9LmWh2USp6K2W50/khEsnY6OqKBUS26Ln9ZM=";
 
   meta = with lib; {
     homepage = "https://tandoor.dev/";

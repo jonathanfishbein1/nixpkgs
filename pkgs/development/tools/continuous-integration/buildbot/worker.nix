@@ -15,7 +15,7 @@
 # tests
 , parameterized
 , psutil
-, setuptoolsTrial
+, setuptools-trial
 
 # passthru
 , nixosTests
@@ -27,7 +27,7 @@ buildPythonPackage (rec {
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-L7TKo+4RDqHVVB/0ujR3jDxD+emvcEHdHTLyHe9jdk4=";
+    hash = "sha256-aAwrIYJRNbvZEV3kkCWnfyuZAMeyynZkOkxQ0wDatxU=";
   };
 
   postPatch = ''
@@ -36,7 +36,7 @@ buildPythonPackage (rec {
   '';
 
   nativeBuildInputs = [
-    setuptoolsTrial
+    setuptools-trial
   ];
 
   propagatedBuildInputs = [

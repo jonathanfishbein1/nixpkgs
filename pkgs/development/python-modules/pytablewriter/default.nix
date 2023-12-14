@@ -23,7 +23,7 @@
 
 buildPythonPackage rec {
   pname = "pytablewriter";
-  version = "1.0.0";
+  version = "1.2.0";
   format = "pyproject";
 
   disabled = pythonOlder "3.7";
@@ -32,7 +32,7 @@ buildPythonPackage rec {
     owner = "thombashi";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-VDx7/kKRBho4oWvUXYe5K9CC4vUCDs91G05Wlpa47OE=";
+    hash = "sha256-b3YzDqNATaT/FFG4/x9EGlYlhXKPvgNB2xnm0bzvLJQ=";
   };
 
   nativeBuildInputs = [
@@ -105,16 +105,19 @@ buildPythonPackage rec {
     "pathvalidate"
   ];
 
-  # Circular dependency
   disabledTests = [
+    # Circular dependency
     "test_normal_from_file"
     "test_normal_from_text"
     "test_normal_clear_theme"
+    # Test compares CLI output
+    "test_normal"
   ];
 
   disabledTestPaths = [
     "test/writer/binary/test_excel_writer.py"
     "test/writer/binary/test_sqlite_writer.py"
+    "test/writer/test_elasticsearch_writer.py"
   ];
 
   meta = with lib; {

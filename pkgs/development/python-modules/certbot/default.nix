@@ -17,6 +17,7 @@
 , six
 , zope-component
 , zope_interface
+, setuptools
 , dialog
 , gnureadline
 , pytest-xdist
@@ -26,13 +27,14 @@
 
 buildPythonPackage rec {
   pname = "certbot";
-  version = "2.4.0";
+  version = "2.7.4";
+  format = "setuptools";
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-BQsdhlYABZtz5+SORiCVnWMZdMmiWGM9W1YLqObyFo8=";
+    hash = "sha256-BZ7JqAciwbmkpbzR/qZHAraLJWWXNRN3Er4XvfU5kYs=";
   };
 
   sourceRoot = "${src.name}/${pname}";
@@ -52,6 +54,7 @@ buildPythonPackage rec {
     six
     zope-component
     zope_interface
+    setuptools # for pkg_resources
   ];
 
   buildInputs = [ dialog gnureadline ];

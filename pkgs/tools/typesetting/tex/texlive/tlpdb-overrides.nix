@@ -1,7 +1,7 @@
-{ lib, tlpdb, bin, tlpdbxz, tl
+{ stdenv, lib, tlpdb, bin, tlpdbxz, tl
 , installShellFiles
 , coreutils, findutils, gawk, getopt, ghostscript_headless, gnugrep
-, gnumake, gnupg, gnused, gzip, ncurses, perl, python3, ruby, zip
+, gnumake, gnupg, gnused, gzip, html-tidy, ncurses, perl, python3, ruby, zip
 }:
 
 oldTlpdb:
@@ -13,7 +13,9 @@ let
     # so we remove them from binfiles, and add back the ones texlinks purposefully ignore (e.g. mptopdf)
     removeFormatLinks = lib.mapAttrs (_: attrs:
       if (attrs ? formats && attrs ? binfiles)
-      then let formatLinks = lib.catAttrs "name" (lib.filter (f: f.name != f.engine) attrs.formats);
+      # TLPDB reports erroneously that various metafont binaries like "mf" are format links to engines
+      # like "mf-nowin"; core-big provides both binaries and links so we simply skip them here
+      then let formatLinks = lib.catAttrs "name" (lib.filter (f: f.name != f.engine && ! lib.hasSuffix "-nowin" f.engine) attrs.formats);
                binNotFormats = lib.subtractLists formatLinks attrs.binfiles;
            in if binNotFormats != [] then attrs // { binfiles = binNotFormats; } else removeAttrs attrs [ "binfiles" ]
       else attrs);
@@ -86,6 +88,7 @@ in lib.recursiveUpdate orig rec {
   pkfix-helper.extraBuildInputs = [ ghostscript_headless ];
   ps2eps.extraBuildInputs = [ ghostscript_headless ];
   pst2pdf.extraBuildInputs = [ ghostscript_headless ];
+  tex4ebook.extraBuildInputs = [ html-tidy ];
   tex4ht.extraBuildInputs = [ ruby ];
   texlive-scripts.extraBuildInputs = [ gnused ];
   texlive-scripts-extra.extraBuildInputs = [ coreutils findutils ghostscript_headless gnused ];
@@ -104,10 +107,6 @@ in lib.recursiveUpdate orig rec {
 
   # remove man
   texlive-scripts.binfiles = lib.remove "man" orig.texlive-scripts.binfiles;
-
-  # upmendex is "TODO" in bin.nix
-  uptex.binfiles = lib.remove "upmendex" orig.uptex.binfiles;
-
   # xindy is broken on some platforms unfortunately
   xindy.binfiles = if bin ? xindy
     then lib.subtractLists [ "xindy.mem" "xindy.run" ] orig.xindy.binfiles
@@ -122,32 +121,19 @@ in lib.recursiveUpdate orig rec {
   epstopdf.binlinks.repstopdf = "epstopdf";
   pdfcrop.binlinks.rpdfcrop = "pdfcrop";
 
-  ptex.binlinks = {
-    pdvitomp = bin.metapost + "/bin/pdvitomp";
-    pmpost = bin.metapost + "/bin/pmpost";
-    r-pmpost = bin.metapost + "/bin/r-pmpost";
-  };
-
   texdef.binlinks = {
     latexdef = "texdef";
   };
 
   texlive-scripts.binlinks = {
     mktexfmt = "fmtutil";
-    texhash = (lib.last tl."texlive.infra".pkgs) + "/bin/mktexlsr";
+    texhash = tl."texlive.infra" + "/bin/mktexlsr";
   };
 
   texlive-scripts-extra.binlinks = {
     allec = "allcm";
     kpsepath = "kpsetool";
     kpsexpand = "kpsetool";
-  };
-
-  # metapost binaries are in bin.metapost instead of bin.core
-  uptex.binlinks = {
-    r-upmpost = bin.metapost + "/bin/r-upmpost";
-    updvitomp = bin.metapost + "/bin/updvitomp";
-    upmpost = bin.metapost + "/bin/upmpost";
   };
 
   #### add PATH dependencies without wrappers
@@ -256,6 +242,10 @@ in lib.recursiveUpdate orig rec {
     sed -i '2i$ENV{PATH}='"'"'${lib.makeBinPath pst2pdf.extraBuildInputs}'"'"' . ($ENV{PATH} ? ":$ENV{PATH}" : '"'''"');' "$out"/bin/pst2pdf
   '';
 
+  tex4ebook.postFixup = ''
+    sed -i '2ios.setenv("PATH","${lib.makeBinPath tex4ebook.extraBuildInputs}" .. (os.getenv("PATH") and ":" .. os.getenv("PATH") or ""))' "$out"/bin/tex4ebook
+  '';
+
   tex4ht.postFixup = ''
     sed -i -e '2iPATH="${lib.makeBinPath tex4ht.extraBuildInputs}''${PATH:+:$PATH}"' -e 's/\\rubyCall//g;' "$out"/bin/htcontext
   '';
@@ -340,6 +330,11 @@ in lib.recursiveUpdate orig rec {
 
   #### misc
 
+  # RISC-V: https://github.com/LuaJIT/LuaJIT/issues/628
+  luajittex.binfiles = lib.optionals
+    (!(stdenv.hostPlatform.isPower && stdenv.hostPlatform.is64bit) && !stdenv.hostPlatform.isRiscV)
+    orig.luajittex.binfiles;
+
   # tlpdb lists license as "unknown", but the README says lppl13: http://mirrors.ctan.org/language/arabic/arabi-add/README
   arabi-add.license = [  "lppl13c" ];
 
@@ -362,7 +357,7 @@ in lib.recursiveUpdate orig rec {
         mkdir -p support/texdoc
         touch support/texdoc/NEWS
 
-        TEXMFCNF="${bin.core}"/share/texmf-dist/web2c TEXMF="$out" TEXDOCS=. TEXMFVAR=. \
+        TEXMFCNF="${tl.kpathsea.tex}/web2c" TEXMF="$out" TEXDOCS=. TEXMFVAR=. \
           "${bin.luatex}"/bin/texlua "$out"/scripts/texdoc/texdoc.tlu \
           -c texlive_tlpdb=texlive.tlpdb -lM texdoc
 
@@ -372,7 +367,7 @@ in lib.recursiveUpdate orig rec {
 
     # install zsh completion
     postFixup = ''
-      TEXMFCNF="${bin.core}"/share/texmf-dist/web2c TEXMF="$scriptsFolder/../.." \
+      TEXMFCNF="${tl.kpathsea.tex}"/web2c TEXMF="$scriptsFolder/../.." \
         texlua "$out"/bin/texdoc --print-completion zsh > "$TMPDIR"/_texdoc
       substituteInPlace "$TMPDIR"/_texdoc \
         --replace 'compdef __texdoc texdoc' '#compdef texdoc' \
@@ -391,14 +386,14 @@ in lib.recursiveUpdate orig rec {
     license = [ "gpl2Plus" ] ++ lib.toList bin.core.meta.license.shortName ++ orig."texlive.infra".license or [ ];
 
     scriptsFolder = "texlive";
-    extraBuildInputs = [ coreutils gnused gnupg (lib.last tl.kpathsea.pkgs) (perl.withPackages (ps: with ps; [ Tk ])) ];
+    extraBuildInputs = [ coreutils gnused gnupg tl.kpathsea (perl.withPackages (ps: with ps; [ Tk ])) ];
 
     # make tlmgr believe it can use kpsewhich to evaluate TEXMFROOT
     postFixup = ''
       substituteInPlace "$out"/bin/tlmgr \
         --replace 'if (-r "$bindir/$kpsewhichname")' 'if (1)'
       sed -i '2i$ENV{PATH}='"'"'${lib.makeBinPath [ gnupg ]}'"'"' . ($ENV{PATH} ? ":$ENV{PATH}" : '"'''"');' "$out"/bin/tlmgr
-      sed -i '2iPATH="${lib.makeBinPath [ coreutils gnused (lib.last tl.kpathsea.pkgs) ]}''${PATH:+:$PATH}"' "$out"/bin/mktexlsr
+      sed -i '2iPATH="${lib.makeBinPath [ coreutils gnused tl.kpathsea ]}''${PATH:+:$PATH}"' "$out"/bin/mktexlsr
     '';
 
     # add minimal texlive.tlpdb
