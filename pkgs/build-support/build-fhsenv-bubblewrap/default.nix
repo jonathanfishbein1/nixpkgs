@@ -149,6 +149,13 @@ let
       done
     fi
 
+    # propagate /etc from the actual host if nested
+    if [[ -e /.host-etc ]]; then
+      ro_mounts+=(--ro-bind /.host-etc /.host-etc)
+    else
+      ro_mounts+=(--ro-bind /etc /.host-etc)
+    fi
+
     for i in ${lib.escapeShellArgs etcBindEntries}; do
       if [[ "''${etc_ignored[@]}" =~ "$i" ]]; then
         continue
@@ -180,6 +187,12 @@ let
       x11_args+=(--ro-bind-try "$local_socket" "$local_socket")
     fi
 
+    ${lib.optionalString privateTmp ''
+    # sddm places XAUTHORITY in /tmp
+    if [[ "$XAUTHORITY" == /tmp/* ]]; then
+      x11_args+=(--ro-bind-try "$XAUTHORITY" "$XAUTHORITY")
+    fi''}
+
     cmd=(
       ${bubblewrap}/bin/bwrap
       --dev-bind /dev /dev
@@ -193,7 +206,6 @@ let
       ${lib.optionalString unshareCgroup "--unshare-cgroup"}
       ${lib.optionalString dieWithParent "--die-with-parent"}
       --ro-bind /nix /nix
-      --ro-bind /etc /.host-etc
       ${lib.optionalString privateTmp "--tmpfs /tmp"}
       # Our glibc will look for the cache in its own path in `/nix/store`.
       # As such, we need a cache to exist there, because pressure-vessel

@@ -554,6 +554,8 @@ self: super: with self; {
 
   anonip = callPackage ../development/python-modules/anonip { };
 
+  anova-wifi = callPackage ../development/python-modules/anova-wifi { };
+
   ansi2html = callPackage ../development/python-modules/ansi2html { };
 
   ansi2image = callPackage ../development/python-modules/ansi2image { };
@@ -1747,6 +1749,8 @@ self: super: with self; {
 
   cachecontrol = callPackage ../development/python-modules/cachecontrol { };
 
+  cached-ipaddress = callPackage ../development/python-modules/cached-ipaddress { };
+
   cached-property = callPackage ../development/python-modules/cached-property { };
 
   cachelib = callPackage ../development/python-modules/cachelib { };
@@ -1754,8 +1758,6 @@ self: super: with self; {
   cachetools = callPackage ../development/python-modules/cachetools { };
 
   cachey = callPackage ../development/python-modules/cachey { };
-
-  cacheyou = callPackage ../development/python-modules/cacheyou { };
 
   cachier = callPackage ../development/python-modules/cachier { };
 
@@ -1995,6 +1997,8 @@ self: super: with self; {
   cheroot = callPackage ../development/python-modules/cheroot { };
 
   cherrypy = callPackage ../development/python-modules/cherrypy { };
+
+  cherrypy-cors = callPackage ../development/python-modules/cherrypy-cors { };
 
   chess = callPackage ../development/python-modules/chess { };
 
@@ -2373,6 +2377,8 @@ self: super: with self; {
   cppheaderparser = callPackage ../development/python-modules/cppheaderparser { };
 
   cppy = callPackage ../development/python-modules/cppy { };
+
+  cpufeature = callPackage ../development/python-modules/cpufeature { };
 
   cpyparsing = callPackage ../development/python-modules/cpyparsing { };
 
@@ -3077,6 +3083,8 @@ self: super: with self; {
 
   django-markup = callPackage ../development/python-modules/django-markup { };
 
+  django-markdownx = callPackage ../development/python-modules/django-markdownx { };
+
   django-model-utils = callPackage ../development/python-modules/django-model-utils { };
 
   django-modelcluster = callPackage ../development/python-modules/django-modelcluster { };
@@ -3084,6 +3092,8 @@ self: super: with self; {
   django-multiselectfield = callPackage ../development/python-modules/django-multiselectfield { };
 
   django-maintenance-mode = callPackage ../development/python-modules/django-maintenance-mode { };
+
+  django-mdeditor = callPackage ../development/python-modules/django-mdeditor { };
 
   django-mptt = callPackage ../development/python-modules/django-mptt { };
 
@@ -3254,6 +3264,8 @@ self: super: with self; {
   };
 
   dnachisel = callPackage ../development/python-modules/dnachisel { };
+
+  dnf-plugins-core = callPackage ../development/python-modules/dnf-plugins-core { };
 
   dnf4 = callPackage ../development/python-modules/dnf4 { };
 
@@ -4751,6 +4763,8 @@ self: super: with self; {
 
   googletrans = callPackage ../development/python-modules/googletrans { };
 
+  gotailwind = callPackage ../development/python-modules/gotailwind { };
+
   gotenberg-client = callPackage ../development/python-modules/gotenberg-client { };
 
   gorilla = callPackage ../development/python-modules/gorilla { };
@@ -4811,6 +4825,8 @@ self: super: with self; {
   gradio = callPackage ../development/python-modules/gradio { };
 
   gradio-client = callPackage ../development/python-modules/gradio/client.nix { };
+
+  grafanalib = callPackage ../development/python-modules/grafanalib/default.nix { };
 
   grammalecte = callPackage ../development/python-modules/grammalecte { };
 
@@ -5342,6 +5358,8 @@ self: super: with self; {
   ical = callPackage ../development/python-modules/ical { };
 
   icalendar = callPackage ../development/python-modules/icalendar { };
+
+  icalevents = callPackage ../development/python-modules/icalevents { };
 
   icecream = callPackage ../development/python-modules/icecream { };
 
@@ -6807,6 +6825,8 @@ self: super: with self; {
   mayavi = pkgs.libsForQt5.callPackage ../development/python-modules/mayavi {
     inherit (self) buildPythonPackage pythonOlder pythonAtLeast pyface pygments numpy packaging vtk traitsui envisage apptools pyqt5;
   };
+
+  mayim = callPackage ../development/python-modules/mayim { };
 
   mbddns = callPackage ../development/python-modules/mbddns { };
 
@@ -8590,7 +8610,7 @@ self: super: with self; {
 
   openai-triton = callPackage ../development/python-modules/openai-triton {
     llvm = pkgs.openai-triton-llvm;
-    cudaPackages = pkgs.cudaPackages_12_0;
+    cudaPackages = pkgs.cudaPackages_12_1;
   };
 
   openai-triton-cuda = self.openai-triton.override {
@@ -8751,6 +8771,8 @@ self: super: with self; {
   orange-canvas-core = callPackage ../development/python-modules/orange-canvas-core { };
 
   orange-widget-base = callPackage ../development/python-modules/orange-widget-base { };
+
+  oras = callPackage ../development/python-modules/oras { };
 
   orderedmultidict = callPackage ../development/python-modules/orderedmultidict { };
 
@@ -9326,6 +9348,10 @@ self: super: with self; {
   pycookiecheat = callPackage ../development/python-modules/pycookiecheat { };
 
   pycoolmasternet-async = callPackage ../development/python-modules/pycoolmasternet-async { };
+
+  pycrdt = callPackage ../development/python-modules/pycrdt { };
+
+  pycrdt-websocket = callPackage ../development/python-modules/pycrdt-websocket { };
 
   pyfibaro = callPackage ../development/python-modules/pyfibaro { };
 
@@ -12486,6 +12512,8 @@ self: super: with self; {
 
   returns = callPackage ../development/python-modules/returns { };
 
+  reuse = callPackage ../development/python-modules/reuse { };
+
   rfc3339 = callPackage ../development/python-modules/rfc3339 { };
 
   rfc3339-validator = callPackage ../development/python-modules/rfc3339-validator { };
@@ -13784,6 +13812,18 @@ self: super: with self; {
 
   succulent = callPackage ../development/python-modules/succulent { };
 
+  sudachidict-core = callPackage ../development/python-modules/sudachidict { };
+
+  sudachidict-full = callPackage ../development/python-modules/sudachidict {
+    sudachidict = pkgs.sudachidict.override { dict-type = "full"; };
+  };
+
+  sudachidict-small = callPackage ../development/python-modules/sudachidict {
+    sudachidict = pkgs.sudachidict.override { dict-type = "small"; };
+  };
+
+  sudachipy = callPackage ../development/python-modules/sudachipy { };
+
   sumo = callPackage ../development/python-modules/sumo { };
 
   sumtypes = callPackage ../development/python-modules/sumtypes { };
@@ -14086,6 +14126,8 @@ self: super: with self; {
   testcontainers = callPackage ../development/python-modules/testcontainers { };
 
   testfixtures = callPackage ../development/python-modules/testfixtures { };
+
+  texsoup = callPackage ../development/python-modules/texsoup { };
 
   textfsm = callPackage ../development/python-modules/textfsm { };
 
@@ -14438,6 +14480,8 @@ self: super: with self; {
   translatepy = callPackage ../development/python-modules/translatepy { };
 
   translationstring = callPackage ../development/python-modules/translationstring { };
+
+  translitcodec = callPackage ../development/python-modules/translitcodec { };
 
   transmission-rpc = callPackage ../development/python-modules/transmission-rpc { };
 
@@ -15516,6 +15560,8 @@ self: super: with self; {
   universal-pathlib = callPackage ../development/python-modules/universal-pathlib { };
 
   universal-silabs-flasher = callPackage ../development/python-modules/universal-silabs-flasher { };
+
+  unix-ar = callPackage ../development/python-modules/unix-ar { };
 
   unpaddedbase64 = callPackage ../development/python-modules/unpaddedbase64 { };
 
