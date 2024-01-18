@@ -2,6 +2,7 @@
 , callPackage
 , python3Packages
 , fetchFromGitHub
+, installShellFiles
 , platformio
 , esptool
 , git
@@ -10,7 +11,7 @@
 let
   python = python3Packages.python.override {
     packageOverrides = self: super: {
-      esphome-dashboard = self.callPackage ./dashboard.nix {};
+      esphome-dashboard = self.callPackage ./dashboard.nix { };
     };
   };
 in
@@ -28,6 +29,8 @@ python.pkgs.buildPythonApplication rec {
 
   nativeBuildInputs = with python.pkgs; [
     setuptools
+    argcomplete
+    installShellFiles
   ];
 
   postPatch = ''
@@ -75,6 +78,7 @@ python.pkgs.buildPythonApplication rec {
     # esptool is used in esphomeyaml/__main__.py
     # git is used in esphomeyaml/writer.py
     "--prefix PATH : ${lib.makeBinPath [ platformio esptool git ]}"
+    "--prefix PYTHONPATH : $PYTHONPATH" # will show better error messages
     "--set ESPHOME_USE_SUBPROCESS ''"
   ];
 
@@ -97,9 +101,20 @@ python.pkgs.buildPythonApplication rec {
     $out/bin/esphome --help > /dev/null
   '';
 
+  postInstall =
+    let
+      argcomplete = lib.getExe' python3Packages.argcomplete "register-python-argcomplete";
+    in
+    ''
+      installShellCompletion --cmd esphome \
+        --bash <(${argcomplete} --shell bash esphome) \
+        --zsh <(${argcomplete} --shell zsh esphome) \
+        --fish <(${argcomplete} --shell fish esphome)
+    '';
+
   passthru = {
     dashboard = python.pkgs.esphome-dashboard;
-    updateScript = callPackage ./update.nix {};
+    updateScript = callPackage ./update.nix { };
   };
 
   meta = with lib; {

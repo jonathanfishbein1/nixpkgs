@@ -7,6 +7,9 @@ let
   packages = self: let
     inherit (self) callPackage;
   in {
+    #### Core Apps
+    lomiri-terminal-app = callPackage ./applications/lomiri-terminal-app { };
+
     #### Data
     lomiri-schemas = callPackage ./data/lomiri-schemas { };
     suru-icon-theme = callPackage ./data/suru-icon-theme { };
@@ -32,6 +35,7 @@ let
     #### Services
     biometryd = callPackage ./services/biometryd { };
     hfd-service = callPackage ./services/hfd-service { };
+    history-service = callPackage ./services/history-service { };
     lomiri-download-manager = callPackage ./services/lomiri-download-manager { };
     lomiri-url-dispatcher = callPackage ./services/lomiri-url-dispatcher { };
     mediascanner2 = callPackage ./services/mediascanner2 { };
