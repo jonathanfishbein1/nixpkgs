@@ -18,7 +18,7 @@
 
 buildPythonPackage rec {
   pname = "ariadne";
-  version = "0.22.0";
+  version = "0.23.0";
   pyproject = true;
 
   disabled = pythonOlder "3.8";
@@ -26,10 +26,8 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "mirumee";
     repo = "ariadne";
-    # https://github.com/mirumee/ariadne/issues/1157
-    #rev = "refs/tags/${version}";
-    rev = "refs/tags/022.0";
-    hash = "sha256-GMBtW2gZbF1m0BrKhYEkSaZYt5tIGmP/ipy6WC1H1pg=";
+    rev = "refs/tags/${version}";
+    hash = "sha256-zdM6LKtrD6m3hWn90yAgsinCvaa86BaTdhgf/VzGDLA=";
   };
 
   patches = [

@@ -16,12 +16,12 @@
 
 buildPythonPackage rec {
   pname = "mplhep";
-  version = "0.3.32";
+  version = "0.3.44";
   format = "pyproject";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-xwlrMZLJKRW6iqMsDKS5BDqejADSk/qGOAnQDZ2fTPc=";
+    hash = "sha256-UyHjNtkULBzsa76ky+6zgjErXKCfnn2oaJPjG47Pgqw=";
   };
 
   nativeBuildInputs = [
