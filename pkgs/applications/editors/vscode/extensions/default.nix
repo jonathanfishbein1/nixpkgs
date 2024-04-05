@@ -1545,15 +1545,6 @@ let
         };
       };
 
-     hbenl.vscode-test-explorer = buildVscodeMarketplaceExtension {
-        mktplcRef = {
-          name = "vscode-test-explorer";
-          publisher = "hbenl";
-          version = "2.21.1";
-          sha256 = "sha256-fHyePd8fYPt7zPHBGiVmd8fRx+IM3/cSBCyiI/C0VAg=";
-        };
-      };
-
      ms-vscode.test-adapter-converter = buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "test-adapter-converter";
