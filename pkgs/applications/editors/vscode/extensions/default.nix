@@ -1545,15 +1545,6 @@ let
         };
       };
 
-     ms-vscode.test-adapter-converter = buildVscodeMarketplaceExtension {
-        mktplcRef = {
-          name = "test-adapter-converter";
-          publisher = "ms-vscode";
-          version = "0.1.7";
-          sha256 = "sha256-W5t0X8LwpI6ZL7sx6edo/0jy/ujHHZU+xZWR4f7sbec=";
-        };
-      };
-
       emmanuelbeziat.vscode-great-icons = buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "vscode-great-icons";
