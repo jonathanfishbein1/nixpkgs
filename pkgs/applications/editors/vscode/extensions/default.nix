@@ -1,21 +1,21 @@
 # Before adding a new extension, read ./README.md
 
-{
-  autoPatchelfHook,
-  callPackage,
-  config,
-  fetchurl,
-  jdk,
-  jq,
-  lib,
-  llvmPackages,
-  llvmPackages_14,
-  moreutils,
-  protobuf,
-  python3Packages,
-  stdenv,
-  vscode-utils,
-  zlib,
+{ autoPatchelfHook
+, callPackage
+, config
+, fetchurl
+, jdk
+, jq
+, lib
+, llvmPackages
+, llvmPackages_14
+, moreutils
+, protobuf
+, python3Packages
+, stdenv
+, vscode-utils
+, zlib
+,
 }:
 
 let
@@ -1494,13 +1494,8 @@ let
         mktplcRef = {
           name = "elm-ls-vscode";
           publisher = "Elmtooling";
-<<<<<<< HEAD
           version = "2.7.2";
           sha256 = "sha256-twxHf8VeTYV3t3FkfG2WUvEDmKb8u+pI/ptspsSmt80=";
-=======
-          version = "2.6.0";
-          hash = "sha256-iNFc7YJFl3d4/BJE9TPJfL0iqEkUtyEyVt4v1J2bXts=";
->>>>>>> refs/remotes/origin/master
         };
         meta = {
           changelog = "https://marketplace.visualstudio.com/items/Elmtooling.elm-ls-vscode/changelog";
