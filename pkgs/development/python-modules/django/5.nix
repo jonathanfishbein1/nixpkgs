@@ -1,12 +1,13 @@
 { lib
 , stdenv
 , buildPythonPackage
-, fetchPypi
+, fetchFromGitHub
+, fetchpatch2
 , pythonAtLeast
 , pythonOlder
 , substituteAll
 
-# build
+# build-system
 , setuptools
 
 # patched in
@@ -14,11 +15,11 @@
 , gdal
 , withGdal ? false
 
-# propagates
+# dependencies
 , asgiref
 , sqlparse
 
-# extras
+# optional-dependencies
 , argon2-cffi
 , bcrypt
 
@@ -43,15 +44,16 @@
 
 buildPythonPackage rec {
   pname = "django";
-  version = "5.0.3";
+  version = "5.0.5";
   pyproject = true;
 
   disabled = pythonOlder "3.10";
 
-  src = fetchPypi {
-    pname = "Django";
-    inherit version;
-    hash = "sha256-X7N1gNz0omL5JYwfQ3OBmqzKkGQx9QXkaI4386mRld8=";
+  src = fetchFromGitHub {
+    owner = "django";
+    repo = "django";
+    rev = "refs/tags/${version}";
+    hash = "sha256-0/AbPmTl38E9BpHVKs0r79fISjEa1d4XO/se1pA7zxg=";
   };
 
   patches = [
@@ -83,16 +85,16 @@ buildPythonPackage rec {
       --replace-fail "test_files" "dont_test_files"
   '';
 
-  nativeBuildInputs = [
+  build-system = [
     setuptools
   ];
 
-  propagatedBuildInputs = [
+  dependencies = [
     asgiref
     sqlparse
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     argon2 = [
       argon2-cffi
     ];
@@ -118,7 +120,7 @@ buildPythonPackage rec {
     selenium
     tblib
     tzdata
-  ] ++ lib.flatten (lib.attrValues passthru.optional-dependencies);
+  ] ++ lib.flatten (lib.attrValues optional-dependencies);
 
   doCheck = !stdenv.isDarwin;
 

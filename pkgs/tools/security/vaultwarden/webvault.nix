@@ -8,13 +8,13 @@
 }:
 
 let
-  version = "2024.3.0";
+  version = "2024.5.0";
 
   bw_web_builds = fetchFromGitHub {
     owner = "dani-garcia";
     repo = "bw_web_builds";
     rev = "v${version}";
-    hash = "sha256-nlFs0cOehbGhk/XxWAuNJNhImHDZA3pvci1WdcBy6Ro=";
+    hash = "sha256-di0oOM3ju3rkDVGmKpvS6sCaIXL/QGawr0TUrQjZ8dM=";
   };
 
 in buildNpmPackage rec {
@@ -25,10 +25,10 @@ in buildNpmPackage rec {
     owner = "bitwarden";
     repo = "clients";
     rev = "web-v${lib.removeSuffix "b" version}";
-    hash = "sha256-/YpqGyDesz4ZyIaLGWbxJZkEGFW7IsTfuy/74NuiOS0=";
+    hash = "sha256-kQ2tWfkkG5aifA8UGb5X1wQkGZr6dcVlrb+b78RFX/k=";
   };
 
-  npmDepsHash = "sha256-iwYzxvLPebQiU20TafzdFgQXnNNHK8s0Jwo83VKy4u8=";
+  npmDepsHash = "sha256-gprJGOE/uSSM3NHpcbelB7sueObEl4o522WRHIRFmwo=";
 
   postPatch = ''
     ln -s ${bw_web_builds}/{patches,resources} ..

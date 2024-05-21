@@ -21,11 +21,12 @@
 , squashfsTools
 , setuptools
 , setuptools-scm
+, stdenv
 }:
 
 buildPythonPackage rec {
   pname = "craft-parts";
-  version = "1.29.0";
+  version = "1.30.0";
 
   pyproject = true;
 
@@ -33,7 +34,7 @@ buildPythonPackage rec {
     owner = "canonical";
     repo = "craft-parts";
     rev = "refs/tags/${version}";
-    hash = "sha256-3AWiuRGUGj6q6ZEnShc64DSL1S6kTsry4Z1IYMelvzg=";
+    hash = "sha256-JEf5JYDBH4Pm5ke++7GkpimM8Ec0dFe1GGxruntjmVE=";
   };
 
   patches = [
@@ -103,6 +104,10 @@ buildPythonPackage rec {
     "tests/unit/packages/test_apt_cache.py"
     "tests/unit/packages/test_deb.py"
     "tests/unit/packages/test_chisel.py"
+  ] ++ lib.optionals stdenv.isAarch64 [
+    # These tests have hardcoded "amd64" strings which fail on aarch64
+    "tests/unit/executor/test_environment.py"
+    "tests/unit/features/overlay/test_executor_environment.py"
   ];
 
   passthru.updateScript = nix-update-script { };

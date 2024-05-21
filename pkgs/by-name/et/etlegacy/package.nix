@@ -7,7 +7,7 @@
 
 symlinkJoin {
   name = "etlegacy";
-  version = "2.82.0";
+  version = "2.82.1";
   paths = [
     etlegacy-assets
     etlegacy-unwrapped
@@ -18,11 +18,12 @@ symlinkJoin {
   ];
 
   postBuild = ''
-    rm -rf $out/bin/*
-    makeWrapper ${etlegacy-unwrapped}/bin/etl.* $out/bin/etl \
+    wrapProgram $out/bin/etl.* \
       --add-flags "+set fs_basepath ${placeholder "out"}/lib/etlegacy"
-    makeWrapper ${etlegacy-unwrapped}/bin/etlded.* $out/bin/etlded \
+    wrapProgram $out/bin/etlded.* \
       --add-flags "+set fs_basepath ${placeholder "out"}/lib/etlegacy"
+    makeWrapper $out/bin/etl.* $out/bin/etl
+    makeWrapper $out/bin/etlded.* $out/bin/etlded
   '';
 
   meta = {

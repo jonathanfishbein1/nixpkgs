@@ -1,32 +1,32 @@
-{ lib
-, archinfo
-, buildPythonPackage
-, cffi
-, fetchFromGitHub
-, minidump
-, pefile
-, pyelftools
-, pynose
-, pytestCheckHook
-, pythonOlder
-, pyvex
-, pyxbe
-, setuptools
-, sortedcontainers
+{
+  lib,
+  archinfo,
+  buildPythonPackage,
+  cffi,
+  fetchFromGitHub,
+  minidump,
+  pefile,
+  pyelftools,
+  pynose,
+  pytestCheckHook,
+  pythonOlder,
+  pyvex,
+  pyxbe,
+  setuptools,
+  sortedcontainers,
 }:
 
 let
   # The binaries are following the argr projects release cycle
-  version = "9.2.97";
+  version = "9.2.102";
 
   # Binary files from https://github.com/angr/binaries (only used for testing and only here)
   binaries = fetchFromGitHub {
     owner = "angr";
     repo = "binaries";
     rev = "refs/tags/v${version}";
-    hash = "sha256-FiPEqfNaAXI+xSWE+So//Uwz9k3bANHQ++nRSPKkddM=";
+    hash = "sha256-6FVxlQ1MiJP2mtu4V/mPAyaeCRdBp/sk+u4fdFqxTyA=";
   };
-
 in
 buildPythonPackage rec {
   pname = "cle";
@@ -39,12 +39,10 @@ buildPythonPackage rec {
     owner = "angr";
     repo = "cle";
     rev = "refs/tags/v${version}";
-    hash = "sha256-tain1I7Td+0v7n+px3mQnz7reKZUbGYDWfKnDhvmU8I=";
+    hash = "sha256-BPKNrFBEKV8UuSdrl+HIgBqFClHTvRsGidz+X81bBLI=";
   };
 
-  build-system = [
-    setuptools
-  ];
+  build-system = [ setuptools ];
 
   dependencies = [
     archinfo
@@ -82,9 +80,7 @@ buildPythonPackage rec {
     "test_remote_file_map"
   ];
 
-  pythonImportsCheck = [
-    "cle"
-  ];
+  pythonImportsCheck = [ "cle" ];
 
   meta = with lib; {
     description = "Python loader for many binary formats";

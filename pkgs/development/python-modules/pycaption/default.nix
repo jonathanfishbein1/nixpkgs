@@ -13,7 +13,7 @@
 
 buildPythonPackage rec {
   pname = "pycaption";
-  version = "2.2.5";
+  version = "2.2.7";
 
   disabled = pythonOlder "3.8";
 
@@ -23,7 +23,7 @@ buildPythonPackage rec {
     owner = "pbs";
     repo = "pycaption";
     rev = "refs/tags/${version}";
-    hash = "sha256-zI5zRjvtsVgiIgWsQQgBQHhbYSGRBB6RLYgpbZWJQHs=";
+    hash = "sha256-0rh8w4zQN5qAIPwnm7FO6VyPxMdutYFflpY+xWdEm3M=";
   };
 
   nativeBuildInputs = [

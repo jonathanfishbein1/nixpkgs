@@ -1,6 +1,6 @@
 import ./generic.nix {
-  hash = "sha256-6TLoua3rooDRyPc5BPYgzU/oeVy6F8h+p3UtKGPZkAE=";
-  version = "0.7.0";
-  vendorHash = "sha256-Slw58pszT6sbpxK6/f+ojA+uStt0zSWxztFTm5ovZr8=";
+  hash = "sha256-BFB4bdfh3hI7D1m7a20ckPPyP9CYXW7mjqeTZ/21Gqs=";
+  version = "6.1.0";
+  vendorHash = "sha256-a8ZPhzs7sNIJLjQ9Y87Zf9SXAsmbdVn250Q0OQwy69A=";
   patches = [ ];
 }

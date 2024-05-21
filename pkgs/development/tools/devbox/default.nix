@@ -5,13 +5,13 @@
 }:
 buildGoModule rec {
   pname = "devbox";
-  version = "0.10.2";
+  version = "0.10.7";
 
   src = fetchFromGitHub {
     owner = "jetpack-io";
     repo = pname;
     rev = version;
-    hash = "sha256-mZwvNNwB+btDbjVUQNucDXsBATGfjCvV1odAgkFkiSc=";
+    hash = "sha256-iaPdFDoYmukv1T+HSaGRrbvjvkioX5PlCc9t2VHGJ30=";
   };
 
   ldflags = [
@@ -23,7 +23,7 @@ buildGoModule rec {
   # integration tests want file system access
   doCheck = false;
 
-  vendorHash = "sha256-QnmU8+J+5IIajfVQ5XPrtuo2ELB7AD56KsHsT8wLDws=";
+  vendorHash = "sha256-bSCgjSXdPOWgftlInl3MailtiXslLH/TZw95FiEnCxQ=";
 
   nativeBuildInputs = [ installShellFiles ];
 

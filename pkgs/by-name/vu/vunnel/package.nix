@@ -1,19 +1,20 @@
-{ lib
-, fetchFromGitHub
-, git
-, python3
+{
+  lib,
+  fetchFromGitHub,
+  git,
+  python3,
 }:
 
 python3.pkgs.buildPythonApplication rec {
   pname = "vunnel";
-  version = "0.21.1";
+  version = "0.23.0";
   pyproject = true;
 
   src = fetchFromGitHub {
     owner = "anchore";
     repo = "vunnel";
     rev = "refs/tags/v${version}";
-    hash = "sha256-m+khfAEN+fO3UuCYBqshlvjIXSzebeWBQtoQtPalIio=";
+    hash = "sha256-pfR3LxC1sSvLKIwq0P/9DcNkGVIIDfwMiSOpwJ7km9Y=";
   };
 
   pythonRelaxDeps = [
@@ -21,9 +22,7 @@ python3.pkgs.buildPythonApplication rec {
     "sqlalchemy"
   ];
 
-  nativeBuildInputs = with python3.pkgs; [
-    pythonRelaxDepsHook
-  ];
+  nativeBuildInputs = with python3.pkgs; [ pythonRelaxDepsHook ];
 
   build-system = with python3.pkgs; [
     poetry-core
@@ -52,18 +51,16 @@ python3.pkgs.buildPythonApplication rec {
     zstandard
   ];
 
-  nativeCheckInputs = [
-    git
-  ] ++ (with python3.pkgs; [
-    jsonschema
-    pytest-mock
-    pytest-unordered
-    pytestCheckHook
-  ]);
+  nativeCheckInputs =
+    [ git ]
+    ++ (with python3.pkgs; [
+      jsonschema
+      pytest-mock
+      pytest-unordered
+      pytestCheckHook
+    ]);
 
-  pythonImportsCheck = [
-    "vunnel"
-  ];
+  pythonImportsCheck = [ "vunnel" ];
 
   disabledTests = [
     # Compare output

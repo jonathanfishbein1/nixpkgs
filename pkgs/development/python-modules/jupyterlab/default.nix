@@ -20,14 +20,14 @@
 
 buildPythonPackage rec {
   pname = "jupyterlab";
-  version = "4.1.5";
+  version = "4.2.0";
   pyproject = true;
 
   disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-ya11KQyxC/r/NiS/P7uFIxm0zOTEVmE/jruqmNA1JNs=";
+    hash = "sha256-NW6SBaaiq2icR8j+SRnbpsB243bQPya6rcBXSMJDXdU=";
   };
 
   nativeBuildInputs = [
