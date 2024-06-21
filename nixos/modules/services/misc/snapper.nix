@@ -108,7 +108,7 @@ in
       type = types.bool;
       example = true;
       description = ''
-        Set the `persistentTimer` option for the
+        Set the `Persistent` option for the
         {manpage}`systemd.timer(5)`
         which triggers the snapshot immediately if the last trigger
         was missed (e.g. if the system was powered down).
@@ -235,7 +235,7 @@ in
       timerConfig.OnUnitActiveSec = cfg.cleanupInterval;
     };
 
-    systemd.services.snapper-boot = lib.optionalAttrs cfg.snapshotRootOnBoot {
+    systemd.services.snapper-boot = lib.mkIf cfg.snapshotRootOnBoot {
       description = "Take snapper snapshot of root on boot";
       inherit documentation;
       serviceConfig.ExecStart = "${pkgs.snapper}/bin/snapper --config root create --cleanup-algorithm number --description boot";
