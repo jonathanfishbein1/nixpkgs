@@ -105,6 +105,10 @@ let
       "systemd-rfkill.service"
       "systemd-rfkill.socket"
 
+      # Boot counting
+      "boot-complete.target"
+    ] ++ lib.optional config.boot.loader.systemd-boot.bootCounting.enable "systemd-bless-boot.service" ++ [
+
       # Hibernate / suspend.
       "hibernate.target"
       "suspend.target"
@@ -489,7 +493,7 @@ in
     system.nssModules = [ cfg.package.out ];
     system.nssDatabases = {
       hosts = (mkMerge [
-        (mkOrder 400 ["mymachines"]) # 400 to ensure it comes before resolve (which is mkBefore'd)
+        (mkOrder 400 ["mymachines"]) # 400 to ensure it comes before resolve (which is 501)
         (mkOrder 999 ["myhostname"]) # after files (which is 998), but before regular nss modules
       ]);
       passwd = (mkMerge [

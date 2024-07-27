@@ -18,11 +18,11 @@ with python3.pkgs;
 
 buildPythonApplication rec {
   pname = "safeeyes";
-  version = "2.1.8";
+  version = "2.2.1";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-65U/j6P6X4JzhL0aEOnzKa/Al6SYprOOxix2dtcusJQ=";
+    hash = "sha256-Ub/KcNG2jg4revtfOpr0vDyHzw3vCy+bqLeXX4Po+cw=";
   };
 
   postPatch = ''
@@ -47,6 +47,8 @@ buildPythonApplication rec {
     pygobject3
     dbus-python
     croniter
+    setuptools
+    packaging
   ];
 
   # Prevent double wrapping, let the Python wrapper use the args in preFixup.
