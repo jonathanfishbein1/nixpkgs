@@ -3389,6 +3389,20 @@ let
         };
       };
 
+      ms-edu.pxt-vscode-web = buildVscodeMarketplaceExtension {
+        mktplcRef = {
+          name = "pxt-vscode-web";
+          publisher = "ms-edu";
+          version = "1.0.1";
+          hash = "sha256-+3c98X50LC3EItv0dMk0zg7XDKQ4nmCGkEF7vd5AFDY=";
+        };
+        meta = {
+          description = "Make games and learn code. Create retro arcade style video games, art, and music inside VS Code.";
+          downloadPage = "https://marketplace.visualstudio.com/items?itemName=ms-edu.pxt-vscode-web";
+          homepage = "https://github.com/PowerShell/vscode-powershell";
+        };
+      };
+
       ms-vscode.test-adapter-converter = buildVscodeMarketplaceExtension {
         mktplcRef = {
           name = "test-adapter-converter";
