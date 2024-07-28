@@ -4161,10 +4161,12 @@ self: super: with self; {
 
   fairseq = callPackage ../development/python-modules/fairseq { };
 
-  faiss = toPythonModule (pkgs.faiss.override {
-    pythonSupport = true;
-    pythonPackages = self;
-  });
+  faiss = callPackage ../development/python-modules/faiss {
+    faiss-build = pkgs.faiss.override {
+      pythonSupport = true;
+      pythonPackages = self;
+    };
+  };
 
   fake-useragent = callPackage ../development/python-modules/fake-useragent { };
 
@@ -6187,7 +6189,6 @@ self: super: with self; {
   };
 
   jaxlib-build = callPackage ../development/python-modules/jaxlib rec {
-    inherit (pkgs.darwin) cctools;
     # Some platforms don't have `cudaSupport` defined, hence the need for 'or false'.
     inherit (pkgs.config) cudaSupport;
     IOKit = pkgs.darwin.apple_sdk_11_0.IOKit;
@@ -6776,6 +6777,8 @@ self: super: with self; {
     inherit (pkgs.darwin.apple_sdk.frameworks) AppKit;
   };
 
+  legacy-cgi = callPackage ../development/python-modules/legacy-cgi { };
+
   leidenalg = callPackage ../development/python-modules/leidenalg {
     igraph-c = pkgs.igraph;
   };
@@ -7238,6 +7241,8 @@ self: super: with self; {
   loqedapi = callPackage ../development/python-modules/loqedapi { };
 
   losant-rest = callPackage ../development/python-modules/losant-rest { };
+
+  lottie = callPackage ../development/python-modules/lottie { };
 
   lpc-checksum = callPackage ../development/python-modules/lpc-checksum { };
 
@@ -7708,9 +7713,7 @@ self: super: with self; {
 
   minio = callPackage ../development/python-modules/minio { };
 
-  miniupnpc = callPackage ../development/python-modules/miniupnpc {
-    inherit (pkgs.darwin) cctools;
-  };
+  miniupnpc = callPackage ../development/python-modules/miniupnpc { };
 
   mip = callPackage ../development/python-modules/mip { };
 
@@ -9119,8 +9122,6 @@ self: super: with self; {
 
   nose3 = callPackage ../development/python-modules/nose3 { };
 
-  nose-timer = callPackage ../development/python-modules/nose-timer { };
-
   nose-xunitmp = callPackage ../development/python-modules/nose-xunitmp { };
 
   notebook = callPackage ../development/python-modules/notebook { };
@@ -9164,6 +9165,8 @@ self: super: with self; {
   ntc-templates = callPackage ../development/python-modules/ntc-templates { };
 
   ntplib = callPackage ../development/python-modules/ntplib { };
+
+  nuclear = callPackage ../development/python-modules/nuclear { };
 
   nuitka = callPackage ../development/python-modules/nuitka { };
 
@@ -10690,16 +10693,21 @@ self: super: with self; {
 
   proto-plus = callPackage ../development/python-modules/proto-plus { };
 
-  # Protobuf 4.x
-  protobuf = callPackage ../development/python-modules/protobuf {
-    # If a protobuf upgrade causes many Python packages to fail, please pin it here to the previous version.
-    protobuf = pkgs.protobuf;
-  };
-
   # Protobuf 3.x
   protobuf3 = callPackage ../development/python-modules/protobuf/3.nix {
     protobuf = pkgs.protobuf3_20;
   };
+
+  # Protobuf 4.x
+  protobuf4 = callPackage ../development/python-modules/protobuf/4.nix {
+    protobuf = pkgs.protobuf;
+  };
+
+  # Protobuf 5.x
+  protobuf5 = callPackage ../development/python-modules/protobuf/default.nix { };
+
+  # If a protobuf upgrade causes many Python packages to fail, please pin it here to the previous version.
+  protobuf = protobuf4;
 
   protobuf3-to-dict = callPackage ../development/python-modules/protobuf3-to-dict { };
 
@@ -13355,8 +13363,6 @@ self: super: with self; {
 
   ratelimit = callPackage ../development/python-modules/ratelimit { };
 
-  rauth = callPackage ../development/python-modules/rauth { };
-
   raven = callPackage ../development/python-modules/raven { };
 
   rawkit = callPackage ../development/python-modules/rawkit { };
@@ -15291,7 +15297,6 @@ self: super: with self; {
     };
   in
   callPackage ../development/python-modules/tensorflow {
-    inherit (pkgs.darwin) cctools;
     inherit (pkgs.config) cudaSupport;
     inherit (pkgs.darwin.apple_sdk.frameworks) Foundation Security;
     flatbuffers-core = pkgs.flatbuffers;
@@ -15318,9 +15323,7 @@ self: super: with self; {
 
   tensorflow-metadata = callPackage ../development/python-modules/tensorflow-metadata { };
 
-  tensorflow-probability = callPackage ../development/python-modules/tensorflow-probability {
-    inherit (pkgs.darwin) cctools;
-  };
+  tensorflow-probability = callPackage ../development/python-modules/tensorflow-probability { };
 
   tensorflow = self.tensorflow-build;
 
@@ -16929,8 +16932,6 @@ self: super: with self; {
 
   urwid-readline = callPackage ../development/python-modules/urwid-readline { };
 
-  urwid-mitmproxy = callPackage ../development/python-modules/urwid-mitmproxy { };
-
   usb-devices = callPackage ../development/python-modules/usb-devices { };
 
   usbrelay-py = callPackage ../os-specific/linux/usbrelay/python.nix { };
@@ -17195,6 +17196,8 @@ self: super: with self; {
   wasmerPackages = pkgs.recurseIntoAttrs (callPackage ../development/python-modules/wasmer { });
   inherit (self.wasmerPackages) wasmer wasmer-compiler-cranelift wasmer-compiler-llvm wasmer-compiler-singlepass;
 
+  wat = callPackage ../development/python-modules/wat { };
+
   watchdog = callPackage ../development/python-modules/watchdog {
     inherit (pkgs.darwin.apple_sdk.frameworks) CoreServices;
   };
@@ -17261,11 +17264,7 @@ self: super: with self; {
 
   webexteamssdk = callPackage ../development/python-modules/webexteamssdk { };
 
-  webhelpers = callPackage ../development/python-modules/webhelpers { };
-
   webob = callPackage ../development/python-modules/webob { };
-
-  weboob = callPackage ../development/python-modules/weboob { };
 
   webrtc-noise-gain = callPackage ../development/python-modules/webrtc-noise-gain { };
 
