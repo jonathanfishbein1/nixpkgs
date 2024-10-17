@@ -2,6 +2,7 @@
   lib,
   stdenv,
   fetchurl,
+  autoreconfHook,
   cups,
   rpm,
   cpio,
@@ -9,14 +10,14 @@
 
 stdenv.mkDerivation rec {
   pname = "epson-inkjet-printer-escpr2";
-  version = "1.2.12";
+  version = "1.2.18";
 
   src = fetchurl {
     # To find the most recent version go to
     # https://support.epson.net/linux/Printer/LSB_distribution_pages/en/escpr2.php
     # and retreive the download link for source package for x86 CPU
-    url = "https://download3.ebz.epson.net/dsc/f/03/00/15/98/70/f6a682eeeba1fd8bdf2ac112d5e1111d951c64a6/epson-inkjet-printer-escpr2-1.2.12-1.src.rpm";
-    sha256 = "sha256-7OkDlYhfQ/S3OD5QeN7DgNK0+LHabIm8zErtUDYcqwo=";
+    url = "https://download3.ebz.epson.net/dsc/f/03/00/16/25/39/fcf17405f25e851f3ee0e5ed3ce97d09f22ecb41/epson-inkjet-printer-escpr2-1.2.18-1.src.rpm";
+    sha256 = "sha256-cdCcZzi31jPGmMnlKtPCFVla0YWfrCTbXsXHSeB0Vk4=";
   };
 
   unpackPhase = ''
@@ -29,12 +30,16 @@ stdenv.mkDerivation rec {
     runHook postUnpack
   '';
 
-  patches = [ ./cups-filter-ppd-dirs.patch ];
-
   buildInputs = [ cups ];
   nativeBuildInputs = [
+    autoreconfHook
     rpm
     cpio
+  ];
+
+  configureFlags = [
+    "--with-cupsfilterdir=${builtins.placeholder "out"}/lib/cups/filter"
+    "--with-cupsppddir=${builtins.placeholder "out"}/share/cups/model"
   ];
 
   meta = with lib; {

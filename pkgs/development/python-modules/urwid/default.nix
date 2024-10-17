@@ -46,7 +46,7 @@ buildPythonPackage rec {
     wcwidth
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     glib = [ pygobject3 ];
     tornado = [ tornado ];
     trio = [
@@ -62,7 +62,7 @@ buildPythonPackage rec {
   nativeCheckInputs = [
     glibcLocales
     pytestCheckHook
-  ] ++ lib.flatten (builtins.attrValues passthru.optional-dependencies);
+  ] ++ lib.flatten (builtins.attrValues optional-dependencies);
 
   env.LC_ALL = "en_US.UTF8";
 
@@ -81,6 +81,6 @@ buildPythonPackage rec {
     downloadPage = "https://github.com/urwid/urwid";
     homepage = "https://urwid.org/";
     license = licenses.lgpl21Plus;
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

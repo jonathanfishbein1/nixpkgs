@@ -9,17 +9,18 @@
 , kdsingleapplication
 , pipewire
 , taglib
+, libvgm
 }:
 
 stdenv.mkDerivation (finalAttrs: {
   pname = "fooyin";
-  version = "0.5.1";
+  version = "0.7.2";
 
   src = fetchFromGitHub {
     owner = "ludouzi";
     repo = "fooyin";
     rev = "v" + finalAttrs.version;
-    hash = "sha256-X546vdHSfED2LBztPj+3eK86pjD97I8H+PfhzXV2R3E=";
+    hash = "sha256-9tNd0TDTxlm6jV2kkZGZbi8tZMj13jbp3+aKXOkNtIw=";
   };
 
   buildInputs = [
@@ -31,6 +32,7 @@ stdenv.mkDerivation (finalAttrs: {
     kdePackages.qtbase
     kdePackages.qtsvg
     taglib
+    libvgm
   ];
 
   nativeBuildInputs = [
@@ -41,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
   ];
 
   cmakeFlags = [
-    (lib.cmakeBool "BUILD_TESTING" (finalAttrs.doCheck or false))
+    (lib.cmakeBool "BUILD_TESTING" finalAttrs.finalPackage.doCheck)
     # we need INSTALL_FHS to be true as the various artifacts are otherwise just dumped in the root
     # of $out and the fixupPhase cleans things up anyway
     (lib.cmakeBool "INSTALL_FHS" true)

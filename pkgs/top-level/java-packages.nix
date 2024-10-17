@@ -3,19 +3,16 @@
 with pkgs;
 
 let
-  openjfx11 = callPackage ../development/compilers/openjdk/openjfx/11 { };
   openjfx17 = callPackage ../development/compilers/openjdk/openjfx/17 { };
-  openjfx19 = callPackage ../development/compilers/openjdk/openjfx/19 { };
-  openjfx20 = callPackage ../development/compilers/openjdk/openjfx/20 { };
   openjfx21 = callPackage ../development/compilers/openjdk/openjfx/21 { };
   openjfx22 = callPackage ../development/compilers/openjdk/openjfx/22 { };
 
 in {
-  inherit openjfx11 openjfx17 openjfx19 openjfx20 openjfx21 openjfx22;
+  inherit openjfx17 openjfx21 openjfx22;
 
   compiler = let
     mkOpenjdk = path-linux: path-darwin: args:
-      if stdenv.isLinux
+      if stdenv.hostPlatform.isLinux
       then mkOpenjdkLinuxOnly path-linux args
       else let
         openjdk = callPackage path-darwin {};
@@ -23,14 +20,13 @@ in {
 
     mkOpenjdkLinuxOnly = path-linux: args: let
       openjdk = callPackage path-linux (args);
-    in assert stdenv.isLinux; openjdk // {
+    in assert stdenv.hostPlatform.isLinux; openjdk // {
       headless = openjdk.override { headless = true; };
     };
 
   in rec {
     corretto11 = callPackage ../development/compilers/corretto/11.nix { };
     corretto17 = callPackage ../development/compilers/corretto/17.nix { };
-    corretto19 = callPackage ../development/compilers/corretto/19.nix { };
     corretto21 = callPackage ../development/compilers/corretto/21.nix { };
 
     openjdk8-bootstrap = temurin-bin.jdk-8;
@@ -47,7 +43,7 @@ in {
     openjdk11 = mkOpenjdk
       ../development/compilers/openjdk/11.nix
       ../development/compilers/zulu/11.nix
-      { openjfx = openjfx11; };
+      { openjfx = throw "JavaFX is not supported on OpenJDK 11"; };
 
     openjdk17 = mkOpenjdk
       ../development/compilers/openjdk/17.nix
@@ -55,30 +51,6 @@ in {
       {
         inherit openjdk17-bootstrap;
         openjfx = openjfx17;
-      };
-
-    openjdk18 = mkOpenjdk
-      ../development/compilers/openjdk/18.nix
-      ../development/compilers/zulu/18.nix
-      {
-        openjdk18-bootstrap = temurin-bin.jdk-18;
-        openjfx = openjfx17;
-      };
-
-    openjdk19 = mkOpenjdk
-      ../development/compilers/openjdk/19.nix
-      ../development/compilers/zulu/19.nix
-      {
-        openjdk19-bootstrap = temurin-bin.jdk-19;
-        openjfx = openjfx19;
-      };
-
-    openjdk20 = mkOpenjdk
-      ../development/compilers/openjdk/20.nix
-      ../development/compilers/zulu/20.nix
-      {
-        openjdk20-bootstrap = temurin-bin.jdk-20;
-        openjfx = openjfx20;
       };
 
     openjdk21 = mkOpenjdk
@@ -98,13 +70,13 @@ in {
       };
 
     temurin-bin = recurseIntoAttrs (callPackage (
-      if stdenv.isLinux
+      if stdenv.hostPlatform.isLinux
       then ../development/compilers/temurin-bin/jdk-linux.nix
       else ../development/compilers/temurin-bin/jdk-darwin.nix
     ) {});
 
     semeru-bin = recurseIntoAttrs (callPackage (
-      if stdenv.isLinux
+      if stdenv.hostPlatform.isLinux
       then ../development/compilers/semeru-bin/jdk-linux.nix
       else ../development/compilers/semeru-bin/jdk-darwin.nix
     ) {});

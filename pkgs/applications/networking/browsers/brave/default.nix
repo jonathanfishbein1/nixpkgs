@@ -3,20 +3,20 @@
 
 callPackage ./make-brave.nix (removeAttrs args [ "callPackage" ])
   (
-    if stdenv.isAarch64 then
-      {
+    if stdenv.hostPlatform.isAarch64 then
+      rec {
         pname = "brave";
-        version = "1.67.134";
-        url = "https://github.com/brave/brave-browser/releases/download/v1.67.134/brave-browser_1.67.134_arm64.deb";
-        hash = "sha256-5wa4y+3PlcrT+U7xiPjkXqhpFz1rC+wyH6q9blmjaCI=";
+        version = "1.70.123";
+        url = "https://github.com/brave/brave-browser/releases/download/v${version}/brave-browser_${version}_arm64.deb";
+        hash = "sha256-YqSZYQinNyQQQds5ACyDCeZA+D4sBxyMvMiOvD6CVeU=";
         platform = "aarch64-linux";
       }
-    else if stdenv.isx86_64 then
-      {
+    else if stdenv.hostPlatform.isx86_64 then
+      rec {
         pname = "brave";
-        version = "1.67.134";
-        url = "https://github.com/brave/brave-browser/releases/download/v1.67.134/brave-browser_1.67.134_amd64.deb";
-        hash = "sha256-OJYPV3yJkqGh4OdX4lFZNrOxv33ysFQSTwYmlToXOq8=";
+        version = "1.70.123";
+        url = "https://github.com/brave/brave-browser/releases/download/v${version}/brave-browser_${version}_amd64.deb";
+        hash = "sha256-Hr7/Yry7fhSDe1gzpZqtjuIDrbB6HuC1PSeBQ3HlAdE=";
         platform = "x86_64-linux";
       }
     else

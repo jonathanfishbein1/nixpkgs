@@ -4,12 +4,12 @@
 
 let
   pname = "elixir-ls";
-  version = "0.21.3";
+  version = "0.24.1";
   src = fetchFromGitHub {
     owner = "elixir-lsp";
     repo = "elixir-ls";
     rev = "v${version}";
-    hash = "sha256-IzHvJQ7UdGXFeSyNYKeHlDuY/o1y/E4fM+lG3t9J2HM=";
+    hash = "sha256-d5O7DGEKuwHbjxwJa3HNtaycQIzFTi74UxszRH7TVzQ=";
   };
 in
 mixRelease {
@@ -20,7 +20,7 @@ mixRelease {
   mixFodDeps = fetchMixDeps {
     pname = "mix-deps-${pname}";
     inherit src version elixir;
-    hash = "sha256-3PVMembw3CpYUQ/ynoPKmu0N5iZwoFu9uNjRS+kS4BY=";
+    hash = "sha256-OxQeIdqjY/k02q+nLQnZ+/Zxy/bdjjSCRrVu0usQcsc=";
   };
 
   # elixir-ls is an umbrella app

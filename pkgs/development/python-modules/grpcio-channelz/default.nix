@@ -9,13 +9,13 @@
 
 buildPythonPackage rec {
   pname = "grpcio-channelz";
-  version = "1.65.1";
+  version = "1.66.2";
   pyproject = true;
 
   src = fetchPypi {
     pname = "grpcio_channelz";
     inherit version;
-    hash = "sha256-LAAFFlzWYPooRJeoDD4izW+0TscLq9FAQUM+vhXu/Ag=";
+    hash = "sha256-SQTHg3UjQ2YkiV2QYmlPKQt/Mzg7KWoex8SXtuTH7Rk=";
   };
 
   build-system = [ setuptools ];

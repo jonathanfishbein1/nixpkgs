@@ -3,6 +3,7 @@
 
 let
   python = python310.override {
+    self = python;
     packageOverrides = self: super: {
       pypdf2 = super.pypdf2.overridePythonAttrs (old: rec {
         version = "1.28.6";
@@ -15,8 +16,6 @@ let
           fetchSubmodules = true;
           hash = "sha256-WnRbsy/PJcotZqY9mJPLadrYqkXykOVifLIbDyNf4s4=";
         };
-
-        nativeBuildInputs = [ ];
 
         nativeCheckInputs = with self; [ pytestCheckHook pillow ];
       });

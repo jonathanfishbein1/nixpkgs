@@ -21,11 +21,11 @@
 
 python3.pkgs.buildPythonApplication rec {
   pname = "gajim";
-  version = "1.9.2";
+  version = "1.9.5";
 
   src = fetchurl {
     url = "https://gajim.org/downloads/${lib.versions.majorMinor version}/gajim-${version}.tar.gz";
-    hash = "sha256-nxSYXVliK+x3RbaXxZ2MA2PZ3bX6UYyctCKNCcdqPDM=";
+    hash = "sha256-f99NsOsWp+vGecI2DxRfZOCrz/DxaRPEX5LI642HVjw=";
   };
 
   format = "pyproject";
@@ -59,14 +59,6 @@ python3.pkgs.buildPythonApplication rec {
     ++ extraPythonPackages python3.pkgs;
 
   nativeCheckInputs = [ xvfb-run dbus ];
-
-  preBuild = ''
-    python pep517build/build_metadata.py -o dist/metadata
-  '';
-
-  postInstall = ''
-    python pep517build/install_metadata.py dist/metadata --prefix=$out
-  '';
 
   checkPhase = ''
     xvfb-run dbus-run-session \

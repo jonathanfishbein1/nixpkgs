@@ -15,6 +15,10 @@
     boot.kernelPackages = pkgs.linuxPackages_latest;
     time.timeZone = "Utc";
 
+    # The standard resolvconf service tries to write to /etc and crashes,
+    # which makes nixos-rebuild exit uncleanly when switching into the new generation
+    services.resolved.enable = true;
+
     environment.etc = {
       "mountpoint/.keep".text = "keep";
       "filemount".text = "keep";
@@ -26,11 +30,21 @@
   };
 
   testScript = ''
+    with subtest("/run/etc-metadata/ is mounted"):
+      print(machine.succeed("mountpoint /run/etc-metadata"))
+
+    with subtest("No temporary files leaked into stage 2"):
+      machine.succeed("[ ! -e /etc-metadata-image ]")
+      machine.succeed("[ ! -e /etc-basedir ]")
+
     with subtest("/etc is mounted as an overlay"):
       machine.succeed("findmnt --kernel --type overlay /etc")
 
     with subtest("direct symlinks point to the target without indirection"):
       assert machine.succeed("readlink -n /etc/localtime") == "/etc/zoneinfo/Utc"
+
+    with subtest("/etc/mtab points to the right file"):
+      assert "/proc/mounts" == machine.succeed("readlink --no-newline /etc/mtab")
 
     with subtest("Correct mode on the source password files"):
       assert machine.succeed("stat -c '%a' /var/lib/nixos/etc/passwd") == "644\n"
@@ -46,6 +60,9 @@
 
     with subtest("switching to the same generation"):
       machine.succeed("/run/current-system/bin/switch-to-configuration test")
+
+    with subtest("the initrd didn't get rebuilt"):
+      machine.succeed("test /run/current-system/initrd -ef /run/current-system/specialisation/new-generation/initrd")
 
     with subtest("switching to a new generation"):
       machine.fail("stat /etc/newgen")

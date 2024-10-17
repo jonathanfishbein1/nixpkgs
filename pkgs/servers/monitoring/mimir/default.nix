@@ -1,5 +1,7 @@
-{ lib, buildGoModule, fetchFromGitHub, nixosTests, nix-update-script }:
-buildGoModule rec {
+{ lib, buildGo122Module, fetchFromGitHub, nixosTests, nix-update-script }:
+# Does not build with Go 1.23
+# FIXME: check again for next release
+buildGo122Module rec {
   pname = "mimir";
   version = "2.13.0";
 
@@ -15,7 +17,16 @@ buildGoModule rec {
   subPackages = [
     "cmd/mimir"
     "cmd/mimirtool"
-  ];
+  ] ++ (map (pathName: "tools/${pathName}") [
+    "compaction-planner"
+    "copyblocks"
+    "copyprefix"
+    "delete-objects"
+    "list-deduplicated-blocks"
+    "listblocks"
+    "markblocks"
+    "undelete-blocks"
+  ]);
 
   passthru = {
     updateScript = nix-update-script {

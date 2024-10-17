@@ -19,7 +19,7 @@ buildGoModule rec {
     owner = "smallstep";
     repo = "certificates";
     rev = "refs/tags/v${version}";
-    hash = "sha256-G+oahvBbMW8vs1DublFAC1rREmQ7Q1r7rNNS0+gnfPE=";
+    hash = "sha256-byVWNab6Q3yryluhMomzLkRNfXQ/68pAq+YGFjbvX1o=";
   };
 
   vendorHash = "sha256-gQEGCbVgtKIaUgBkfpVwLXoUg1EUhaQFn9JZvV5Rjhc=";
@@ -32,8 +32,8 @@ buildGoModule rec {
   nativeBuildInputs = lib.optionals hsmSupport [ pkg-config ];
 
   buildInputs =
-    lib.optionals (hsmSupport && stdenv.isLinux) [ pcsclite ]
-    ++ lib.optionals (hsmSupport && stdenv.isDarwin) [ PCSC ];
+    lib.optionals (hsmSupport && stdenv.hostPlatform.isLinux) [ pcsclite ]
+    ++ lib.optionals (hsmSupport && stdenv.hostPlatform.isDarwin) [ PCSC ];
 
   postPatch = ''
     substituteInPlace systemd/step-ca.service --replace "/bin/kill" "${coreutils}/bin/kill"

@@ -50,7 +50,7 @@ buildPythonPackage rec {
     tqdm
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     optionals = [
       matplotlib
       scikit-image
@@ -62,7 +62,7 @@ buildPythonPackage rec {
 
   nativeCheckInputs = [
     pytestCheckHook
-  ] ++ lib.flatten (builtins.attrValues passthru.optional-dependencies);
+  ] ++ lib.flatten (builtins.attrValues optional-dependencies);
 
   pythonImportsCheck = [ "moviepy" ];
 
@@ -94,6 +94,6 @@ buildPythonPackage rec {
     homepage = "https://zulko.github.io/moviepy/";
     changelog = "https://github.com/Zulko/moviepy/blob/v${version}/CHANGELOG.md";
     license = licenses.mit;
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

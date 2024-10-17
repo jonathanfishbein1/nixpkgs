@@ -30,7 +30,7 @@ buildPythonPackage rec {
     google-crc32c
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     requests = [ requests ];
     aiohttp = [ aiohttp ];
   };
@@ -40,7 +40,7 @@ buildPythonPackage rec {
     mock
     pytest-asyncio
     pytestCheckHook
-  ] ++ passthru.optional-dependencies.requests;
+  ] ++ optional-dependencies.requests;
 
   preCheck = ''
     # prevent shadowing imports
@@ -61,6 +61,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/GoogleCloudPlatform/google-resumable-media-python";
     changelog = "https://github.com/googleapis/google-resumable-media-python/blob/v${version}/CHANGELOG.md";
     license = licenses.asl20;
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

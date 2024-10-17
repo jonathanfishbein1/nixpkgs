@@ -18,6 +18,7 @@
   python,
   pythonOlder,
   tornado,
+  libsodium,
   zeromq,
   pytest-asyncio,
 }:
@@ -44,7 +45,10 @@ buildPythonPackage rec {
 
   dontUseCmakeConfigure = true;
 
-  buildInputs = [ zeromq ];
+  buildInputs = [
+    libsodium
+    zeromq
+  ];
 
   dependencies = lib.optionals isPyPy [ cffi ];
 
@@ -88,6 +92,6 @@ buildPythonPackage rec {
       bsd3 # or
       lgpl3Only
     ];
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

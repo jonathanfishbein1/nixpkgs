@@ -10,7 +10,6 @@
   pydicom,
   pylibjpeg,
   pylibjpeg-libjpeg,
-  pylibjpeg-openjpeg,
 }:
 
 let
@@ -42,7 +41,7 @@ buildPythonPackage rec {
     pydicom
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     libjpeg = [
       pylibjpeg
       pylibjpeg-libjpeg
@@ -50,7 +49,7 @@ buildPythonPackage rec {
     ];
   };
 
-  nativeCheckInputs = [ pytestCheckHook ] ++ passthru.optional-dependencies.libjpeg;
+  nativeCheckInputs = [ pytestCheckHook ] ++ optional-dependencies.libjpeg;
   preCheck = ''
     export HOME=$TMP/test-home
     mkdir -p $HOME/.pydicom/

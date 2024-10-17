@@ -30,7 +30,7 @@ buildPythonPackage rec {
     pytest-asyncio
   ];
 
-  disabledTests = lib.optionals stdenv.isDarwin [ "test_multiprocessing" ];
+  disabledTests = lib.optionals stdenv.hostPlatform.isDarwin [ "test_multiprocessing" ];
 
   __darwinAllowLocalNetworking = true;
 
@@ -41,6 +41,6 @@ buildPythonPackage rec {
     description = "Reference ASGI adapters and channel layers";
     homepage = "https://github.com/django/asgiref";
     license = licenses.bsd3;
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

@@ -8,7 +8,6 @@
   pythonOlder,
   requests,
   setuptools,
-  urllib3,
 }:
 
 buildPythonPackage rec {
@@ -27,7 +26,7 @@ buildPythonPackage rec {
 
   dependencies = [ elastic-transport ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     async = [ aiohttp ];
     requests = [ requests ];
     orjson = [ orjson ];

@@ -1,14 +1,15 @@
 { lib
 , buildPythonPackage
 , fetchFromGitHub
-, poetry-core
+, hatchling
+, hatch-vcs
 , home-assistant
 , python
 }:
 
 buildPythonPackage rec {
   pname = "homeassistant-stubs";
-  version = "2024.7.3";
+  version = "2024.10.2";
   pyproject = true;
 
   disabled = python.version != home-assistant.python.version;
@@ -17,19 +18,20 @@ buildPythonPackage rec {
     owner = "KapJI";
     repo = "homeassistant-stubs";
     rev = "refs/tags/${version}";
-    hash = "sha256-4n1dnQX7Mo2vFCrSUUAvdO3ZErBKK6oUCITazI9PlIQ=";
+    hash = "sha256-6aFZiJKPuUdnC3YzSHyJgn2iTHfP8MCwx17I7uxVTNg=";
   };
 
   build-system = [
-    poetry-core
+    hatchling
+    hatch-vcs
     home-assistant
   ];
 
   postPatch = ''
     # Relax constraint to year and month
     substituteInPlace pyproject.toml --replace-fail \
-      'homeassistant = "${version}"' \
-      'homeassistant = "~${lib.versions.majorMinor home-assistant.version}"'
+      'homeassistant==${version}' \
+      'homeassistant~=${lib.versions.majorMinor home-assistant.version}'
   '';
 
   pythonImportsCheck = [

@@ -1,6 +1,5 @@
 {
   lib,
-  aiohttp,
   aresponses,
   async-modbus,
   async-timeout,
@@ -42,7 +41,7 @@ buildPythonPackage rec {
     tenacity
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     convert = [
       pandas
       python-slugify

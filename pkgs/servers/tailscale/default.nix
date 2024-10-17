@@ -15,17 +15,19 @@
 }:
 
 let
-  version = "1.70.0";
+  version = "1.76.0";
 in
 buildGoModule {
   pname = "tailscale";
   inherit version;
 
+  outputs = [ "out" "derper" ];
+
   src = fetchFromGitHub {
     owner = "tailscale";
     repo = "tailscale";
     rev = "v${version}";
-    hash = "sha256-rB/zaJavA3OH1HK7Rfpta/QmQzi0xsEYTvW5JzzTAlI=";
+    hash = "sha256-fCUrZ+rrNJ9+XYjCtgaTUWmWczBbavtPe1pFM3L913w=";
   };
 
   patches = [
@@ -37,13 +39,13 @@ buildGoModule {
     })
   ];
 
-  vendorHash = "sha256-NtNjH2Vo1Leh98VIOkpyALErhC+6H5BE/uaPkwlejoo=";
+  vendorHash = "sha256-xCZ6YMJ0fqVzO+tKbCzF0ftV05NOB+lJbJBovLqlrtQ=";
 
-  nativeBuildInputs = lib.optionals stdenv.isLinux [ makeWrapper ] ++ [ installShellFiles ];
+  nativeBuildInputs = lib.optionals stdenv.hostPlatform.isLinux [ makeWrapper ] ++ [ installShellFiles ];
 
   CGO_ENABLED = 0;
 
-  subPackages = [ "cmd/tailscaled" ];
+  subPackages = [ "cmd/derper" "cmd/tailscaled" ];
 
   ldflags = [
     "-w"
@@ -60,19 +62,19 @@ buildGoModule {
 
   postInstall = ''
     ln -s $out/bin/tailscaled $out/bin/tailscale
-  '' + lib.optionalString stdenv.isLinux ''
+    moveToOutput "bin/derper" "$derper"
+  '' + lib.optionalString stdenv.hostPlatform.isLinux ''
     wrapProgram $out/bin/tailscaled \
       --prefix PATH : ${lib.makeBinPath [ iproute2 iptables getent shadow ]} \
       --suffix PATH : ${lib.makeBinPath [ procps ]}
-
+    sed -i -e "s#/usr/sbin#$out/bin#" -e "/^EnvironmentFile/d" ./cmd/tailscaled/tailscaled.service
+    install -D -m0444 -t $out/lib/systemd/system ./cmd/tailscaled/tailscaled.service
+  '' + lib.optionalString (stdenv.buildPlatform.canExecute stdenv.hostPlatform) ''
     local INSTALL="$out/bin/tailscale"
     installShellCompletion --cmd tailscale \
       --bash <($out/bin/tailscale completion bash) \
       --fish <($out/bin/tailscale completion fish) \
       --zsh <($out/bin/tailscale completion zsh)
-
-    sed -i -e "s#/usr/sbin#$out/bin#" -e "/^EnvironmentFile/d" ./cmd/tailscaled/tailscaled.service
-    install -D -m0444 -t $out/lib/systemd/system ./cmd/tailscaled/tailscaled.service
   '';
 
   passthru.tests = {

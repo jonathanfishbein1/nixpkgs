@@ -41,7 +41,7 @@ buildPythonPackage rec {
     requests
   ];
 
-  passthru.optional-dependencies = {
+  optional-dependencies = {
     protobuf = [ protobuf ];
   };
 
@@ -94,6 +94,6 @@ buildPythonPackage rec {
     homepage = "https://github.com/googleapis/python-storage";
     changelog = "https://github.com/googleapis/python-storage/blob/v${version}/CHANGELOG.md";
     license = licenses.asl20;
-    maintainers = with maintainers; [ ];
+    maintainers = [ ];
   };
 }

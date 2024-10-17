@@ -5,16 +5,16 @@
 
 buildGoModule rec {
   pname = "weaviate";
-  version = "1.25.8";
+  version = "1.26.6";
 
   src = fetchFromGitHub {
     owner = "weaviate";
     repo = "weaviate";
     rev = "v${version}";
-    hash = "sha256-MmOA0kO5OCXz5MIqz1netXFUShZc0TkMCFKNfbD1uEM=";
+    hash = "sha256-Vi8jcWfG3MvzXDcVFd6wC+KEpPQUL1uBCk7GJwyO0gU=";
   };
 
-  vendorHash = "sha256-D+/gB1HbwXWHJ6e5J6s+HgN4yPQX1nYbvMY2oLIQFwQ=";
+  vendorHash = "sha256-HzEnt/eagDw6/7HV0MRMQDcp56mLv1kE9HCfBouxDRs=";
 
   subPackages = [ "cmd/weaviate-server" ];
 

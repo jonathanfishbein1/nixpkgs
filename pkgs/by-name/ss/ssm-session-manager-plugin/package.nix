@@ -5,13 +5,13 @@
 }:
 buildGoModule rec {
   pname = "ssm-session-manager-plugin";
-  version = "1.2.650.0";
+  version = "1.2.677.0";
 
   src = fetchFromGitHub {
     owner = "aws";
     repo = "session-manager-plugin";
     rev = version;
-    hash = "sha256-IcDVt/iE/EYV9Blvl7Gj0UFJcdsUCFdaSQkIto0CKRI=";
+    hash = "sha256-bfj3LFUYgtrspFsLb46TuIOC3bj/WEamMUa47Q7kATI=";
   };
 
   patches = [
@@ -53,8 +53,14 @@ buildGoModule rec {
   doCheck = true;
   checkFlags = [ "-skip=TestSetSessionHandlers" ];
 
+  # The AWS CLI is expecting the binary name to be 'session-manager-plugin' and
+  # since the outfile is different the following workaround is renaming the binary.
+  postBuild = ''
+    mv $GOPATH/bin/sessionmanagerplugin-main $GOPATH/bin/${meta.mainProgram}
+  '';
+
   preCheck = ''
-    if ! [[ $($GOPATH/bin/sessionmanagerplugin-main --version) = ${lib.escapeShellArg version} ]]; then
+    if ! [[ $($GOPATH/bin/${meta.mainProgram} --version) = ${lib.escapeShellArg version} ]]; then
       echo 'wrong version'
       exit 1
     fi

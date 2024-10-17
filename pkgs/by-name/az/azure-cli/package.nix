@@ -7,7 +7,7 @@
   fetchFromGitHub,
   runCommand,
   installShellFiles,
-  python311,
+  python3,
   writeScriptBin,
 
   # Whether to include patches that enable placing certain behavior-defining
@@ -21,20 +21,15 @@
 }:
 
 let
-  version = "2.62.0";
+  version = "2.64.0";
 
   src = fetchFromGitHub {
     name = "azure-cli-${version}-src";
     owner = "Azure";
     repo = "azure-cli";
     rev = "azure-cli-${version}";
-    hash = "sha256-Rb27KRAb50YzTZzMs6n8g04x14ni3rIYAL3c5j/ieRw=";
+    hash = "sha256-1FnrUvRpAkZ0nAxen3seam2S49tBkK5N37ZD99OkvB0=";
   };
-
-  # Pin Python version to 3.11.
-  # See https://discourse.nixos.org/t/breaking-changes-announcement-for-unstable/17574/53
-  # and https://github.com/Azure/azure-cli/issues/27673
-  python3 = python311;
 
   # put packages that needs to be overridden in the py package scope
   py = callPackage ./python-packages.nix { inherit src version python3; };
@@ -74,7 +69,7 @@ let
   extensions =
     callPackages ./extensions-generated.nix { inherit mkAzExtension; }
     // callPackages ./extensions-manual.nix {
-      inherit mkAzExtension python3;
+      inherit mkAzExtension;
       python3Packages = python3.pkgs;
     };
 
@@ -105,7 +100,10 @@ py.pkgs.toPythonApplication (
 
     sourceRoot = "${src.name}/src/azure-cli";
 
-    nativeBuildInputs = [ installShellFiles ];
+    nativeBuildInputs = [
+      installShellFiles
+      py.pkgs.argcomplete
+    ];
 
     # Dependencies from:
     # https://github.com/Azure/azure-cli/blob/azure-cli-2.62.0/src/azure-cli/setup.py#L52
@@ -196,7 +194,7 @@ py.pkgs.toPythonApplication (
         chardet
         colorama
       ]
-      ++ lib.optional stdenv.isLinux distro
+      ++ lib.optional stdenv.hostPlatform.isLinux distro
       ++ [
         fabric
         javaproperties
@@ -226,11 +224,11 @@ py.pkgs.toPythonApplication (
       ++ lib.concatMap (extension: extension.propagatedBuildInputs) withExtensions;
 
     postInstall =
-      ''
-        substituteInPlace az.completion.sh \
-          --replace register-python-argcomplete ${py.pkgs.argcomplete}/bin/register-python-argcomplete
-        installShellCompletion --bash --name az.bash az.completion.sh
-        installShellCompletion --zsh --name _az az.completion.sh
+      lib.optionalString (stdenvNoCC.buildPlatform.canExecute stdenvNoCC.hostPlatform) ''
+        installShellCompletion --cmd az \
+          --bash <(register-python-argcomplete az --shell bash) \
+          --zsh <(register-python-argcomplete az --shell zsh) \
+          --fish <(register-python-argcomplete az --shell fish)
       ''
       + lib.optionalString withImmutableConfig ''
         export HOME=$TMPDIR

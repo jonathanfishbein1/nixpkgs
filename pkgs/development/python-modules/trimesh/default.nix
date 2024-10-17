@@ -11,14 +11,14 @@
 
 buildPythonPackage rec {
   pname = "trimesh";
-  version = "4.4.3";
+  version = "4.5.0";
   pyproject = true;
 
   disabled = pythonOlder "3.8";
 
   src = fetchPypi {
     inherit pname version;
-    hash = "sha256-pBEK1oMtI8z03zKHKjgE7uohZCE1KRPRUU7Z2tIAHV4=";
+    hash = "sha256-/EnZ+8KeJQF3daAk5d+A9iXJ3dv5gs4+pdNEUHCVBCU=";
   };
 
   build-system = [ setuptools ];
@@ -41,9 +41,10 @@ buildPythonPackage rec {
 
   meta = with lib; {
     description = "Python library for loading and using triangular meshes";
-    homepage = "https://trimsh.org/";
+    homepage = "https://trimesh.org/";
     changelog = "https://github.com/mikedh/trimesh/releases/tag/${version}";
     license = licenses.mit;
+    mainProgram = "trimesh";
     maintainers = with maintainers; [
       gebner
       pbsds
